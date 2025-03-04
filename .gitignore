@@ -1,0 +1,83 @@
+# .NET Core için
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.dll
+*.exe
+
+# Build sonuçları
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio dosyaları
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+.cursorrules
+
+# Rider
+.idea/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+logs/
+
+# Environment files
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependencies
+node_modules/
+packages/
+bower_components/
+
+# Cache directories
+.npm/
+.eslintcache
+.prettiercache
+
+# Temporary files
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+*.cache
+
+# Database files
+*.mdf
+*.ldf
+*.ndf
+
+# Others
+*.DS_Store
+Thumbs.db 

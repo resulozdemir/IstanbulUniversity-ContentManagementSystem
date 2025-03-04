@@ -1,0 +1,6 @@
+@new_cms_HostAddress = http://localhost:5019
+
+GET {{new_cms_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
