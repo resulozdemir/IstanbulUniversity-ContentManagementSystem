@@ -33,6 +33,7 @@ msbuild.wrn
 *.sln.docstates
 *.userprefs
 .cursorrules
+.globalrules.md
 
 # Rider
 .idea/
