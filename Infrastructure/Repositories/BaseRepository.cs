@@ -24,7 +24,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         }
 
         // ID'ye göre tekil kayıt getirme
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -98,8 +98,8 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Filtrelenmiş, sıralanmış ve ilişkili verilerle birlikte kayıtları getirme orn:actıve ve deleted olmayanlar
         public virtual async Task<IEnumerable<T>> GetFilteredAsync(
-            Expression<Func<T, bool>> filter = null,                  //filtreleme icin
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, //siralama icin
+            Expression<Func<T, bool>>? filter = null,                  //filtreleme icin
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, //siralama icin
             string includeProperties = "")                            //iliskili veriler tablolar icin (pages ve components)
         {
             IQueryable<T> query = _dbSet; //IQueryable : Veritabanı sprgusu olusturmak ıcın kullanılan ınterface, sorgu veritabanına girmeden once olusturulur ve optimize edilir
@@ -140,8 +140,22 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         // Çoklu kayıt silme
         public virtual async Task DeleteRangeAsync(IEnumerable<int> ids)
         {
-            var entities = await _dbSet.Where(e => ids.Contains((int)e.GetType().GetProperty("Id").GetValue(e))).ToListAsync();
-            _dbSet.RemoveRange(entities);
+            foreach (var id in ids)
+            {
+                var entity = await GetByIdAsync(id);
+                if (entity != null)
+                {
+                    var idProperty = entity.GetType().GetProperty("Id");
+                    if (idProperty != null)
+                    {
+                        var entityId = (int)idProperty.GetValue(entity)!;
+                        if (entityId == id)
+                        {
+                            _dbSet.Remove(entity);
+                        }
+                    }
+                }
+            }
             await _context.SaveChangesAsync();
         }
 
@@ -158,7 +172,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         }
 
         // Kayıt sayısı hesaplama
-        public virtual async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
+        public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
             if (predicate == null)
                 return await _dbSet.CountAsync();

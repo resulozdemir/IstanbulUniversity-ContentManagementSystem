@@ -33,7 +33,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir sitenin tüm detaylarını getiren metot
         // Site düzenleme sayfasında kullanılır
-        public async Task<TAppSite> GetSiteDetailAsync(int id)
+        public async Task<TAppSite?> GetSiteDetailAsync(int id)
         {
             return await _context.TAppSites
                 .Include(s => s.TAppSitedomains.Where(d => d.Isdeleted == 0))
@@ -68,7 +68,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Alan adına göre site bilgisini getiren metot
         // Site yönlendirmesi için kullanılır
-        public async Task<TAppSite> GetByDomainAsync(string domain)
+        public async Task<TAppSite?> GetByDomainAsync(string domain)
         {
             return await _dbSet
                 .FirstOrDefaultAsync(s => 
@@ -90,8 +90,8 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<(IEnumerable<TAppSite> Items, int TotalCount)> GetPagedSiteListAsync(
             int pageNumber,
             int pageSize,
-            string searchTerm = null,
-            string sortBy = null,
+            string? searchTerm = null,
+            string? sortBy = null,
             bool ascending = true)
         {
             var query = _context.TAppSites

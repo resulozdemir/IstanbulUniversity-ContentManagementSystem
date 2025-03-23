@@ -27,7 +27,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir sayfanın detaylarını getiren metot
         // Sayfa düzenleme ve önizleme ekranlarında kullanılır
-        public async Task<TAppSitepage> GetPageByIdAsync(int id)
+        public async Task<TAppSitepage?> GetPageByIdAsync(int id)
         {
             return await _context.TAppSitepages
                 .FirstOrDefaultAsync(p => p.Id == id && p.Isdeleted == 0);
@@ -35,7 +35,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir sitenin varsayılan sayfasını getiren metot
         // Site ana sayfa yönlendirmesi ve varsayılan içerik gösterimi için kullanılır
-        public async Task<TAppSitepage> GetDefaultPageBySiteIdAsync(int siteId)
+        public async Task<TAppSitepage?> GetDefaultPageBySiteIdAsync(int siteId)
         {
             return await _context.TAppSitepages
                 .FirstOrDefaultAsync(p => p.Siteid == siteId && p.Isdefault == 1 && p.Isdeleted == 0);
@@ -77,7 +77,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir yönlendirme adresine sahip sayfayı getiren metot
         // URL tabanlı sayfa yönlendirmesi ve içerik gösterimi için kullanılır
-        public async Task<TAppSitepage> GetPageByRoutingAsync(int siteId, string routing)
+        public async Task<TAppSitepage?> GetPageByRoutingAsync(int siteId, string routing)
         {
             return await _context.TAppSitepages
                 .FirstOrDefaultAsync(p => p.Siteid == siteId && p.Routing == routing && p.Isdeleted == 0);

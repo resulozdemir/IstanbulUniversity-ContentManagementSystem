@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using new_cms.Application.Interfaces;
 using new_cms.Domain.Entities;
-using new_cms.Infrastructure.Persistence.Repositories;
+using new_cms.Domain.Interfaces;
 
-namespace new_cms.Infrastructure.Repositories
+namespace new_cms.Infrastructure.Persistence.Repositories
 {
     // Menü yönetimi için veritabanı işlemlerini gerçekleştiren repository sınıfı
     public class MenuRepository : BaseRepository<TAppMenu>, IMenuRepository
@@ -16,7 +15,7 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // Menü ID ve Site ID'ye göre tek bir menü getir
-        public new async Task<TAppMenu> GetByIdAsync(int id, int siteId)
+        public async Task<TAppMenu> GetByIdAsync(int id, int siteId)
         {
             return await _dbSet
                 .FirstOrDefaultAsync(m => m.Id == id && m.Siteid == siteId && m.Isdeleted == 0);
@@ -75,13 +74,13 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // Menü ID ve Site ID'ye göre menü varlığını kontrol et
-        public new async Task<bool> ExistsAsync(int id, int siteId)
+        public async Task<bool> ExistsAsync(int id, int siteId)
         {
             return await _dbSet.AnyAsync(m => m.Id == id && m.Siteid == siteId && m.Isdeleted == 0);
         }
 
         // Menü ID ve Site ID'ye göre silme işlemi (Soft Delete)
-        public new async Task DeleteAsync(int id, int siteId)
+        public async Task DeleteAsync(int id, int siteId)
         {
             var menu = await GetByIdAsync(id, siteId);
             if (menu != null)

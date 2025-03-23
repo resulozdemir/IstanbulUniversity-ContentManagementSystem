@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using new_cms.Application.Interfaces;
 using new_cms.Domain.Entities;
-using new_cms.Infrastructure.Persistence.Repositories;
+using new_cms.Domain.Interfaces;
 
-namespace new_cms.Infrastructure.Repositories
+namespace new_cms.Infrastructure.Persistence.Repositories
 {
     // Etkinlik yönetimi için veritabanı işlemlerini gerçekleştiren repository sınıfı
     public class EventRepository : BaseRepository<TAppEvent>, IEventRepository
@@ -16,7 +15,7 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // Etkinlik ID ve Site ID'ye göre tek bir etkinlik getir
-        public new async Task<TAppEvent> GetByIdAsync(int id, int siteId)
+        public async Task<TAppEvent> GetByIdAsync(int id, int siteId)
         {
             return await _dbSet
                 .FirstOrDefaultAsync(e => e.Id == id && e.Siteid == siteId && e.Isdeleted == 0);
@@ -58,13 +57,13 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // Etkinlik ID ve Site ID'ye göre etkinlik varlığını kontrol et
-        public new async Task<bool> ExistsAsync(int id, int siteId)
+        public async Task<bool> ExistsAsync(int id, int siteId)
         {
             return await _dbSet.AnyAsync(e => e.Id == id && e.Siteid == siteId && e.Isdeleted == 0);
         }
 
         // Etkinlik ID ve Site ID'ye göre silme işlemi (Soft Delete)
-        public new async Task DeleteAsync(int id, int siteId)
+        public async Task DeleteAsync(int id, int siteId)
         {
             var events = await GetByIdAsync(id, siteId);
             if (events != null)

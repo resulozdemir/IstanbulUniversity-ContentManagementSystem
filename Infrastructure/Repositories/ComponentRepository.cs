@@ -28,7 +28,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir bileşenin detaylarını getiren metot
         // Bileşen düzenleme sayfasında kullanılır
-        public async Task<TAppComponent> GetComponentByIdAsync(int id)
+        public async Task<TAppComponent?> GetComponentByIdAsync(int id)
         {
             return await _context.TAppComponents
                 .FirstOrDefaultAsync(c => c.Id == id && c.Isdeleted == 0);
@@ -62,7 +62,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir bileşen verisinin detaylarını getiren metot
         // Bileşen veri düzenleme sayfasında kullanılır
-        public async Task<TAppSitecomponentdata> GetComponentDataByIdAsync(int dataId)
+        public async Task<TAppSitecomponentdata?> GetComponentDataByIdAsync(int dataId)
         {
             return await _context.TAppSitecomponentdata
                 .FirstOrDefaultAsync(cd => cd.Id == dataId && cd.Isdeleted == 0);

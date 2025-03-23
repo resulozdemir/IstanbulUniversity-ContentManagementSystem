@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using new_cms.Application.Interfaces;
 using new_cms.Domain.Entities;
-using new_cms.Infrastructure.Persistence.Repositories;
+using new_cms.Domain.Interfaces;
 
-namespace new_cms.Infrastructure.Repositories
+namespace new_cms.Infrastructure.Persistence.Repositories
 {
     // Haber yönetimi için veritabanı işlemlerini gerçekleştiren repository sınıfı
     public class NewsRepository : BaseRepository<TAppNews>, INewsRepository
@@ -16,7 +15,7 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // Haber ID ve Site ID'ye göre tek bir haber getir
-        public new async Task<TAppNews> GetByIdAsync(int id, int siteId)
+        public async Task<TAppNews> GetByIdAsync(int id, int siteId)
         {
             return await _dbSet
                 .FirstOrDefaultAsync(n => n.Id == id && n.Siteid == siteId && n.Isdeleted == 0);
@@ -67,13 +66,13 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // Haber ID ve Site ID'ye göre haber varlığını kontrol et
-        public new async Task<bool> ExistsAsync(int id, int siteId)
+        public async Task<bool> ExistsAsync(int id, int siteId)
         {
             return await _dbSet.AnyAsync(n => n.Id == id && n.Siteid == siteId && n.Isdeleted == 0);
         }
 
         // Haber ID ve Site ID'ye göre silme işlemi (Soft Delete)
-        public new async Task DeleteAsync(int id, int siteId)
+        public async Task DeleteAsync(int id, int siteId)
         {
             var news = await GetByIdAsync(id, siteId);
             if (news != null)

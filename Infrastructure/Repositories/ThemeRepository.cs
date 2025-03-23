@@ -27,7 +27,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir temanın detaylarını getiren metot
         // Tema düzenleme sayfasında kullanılır
-        public async Task<TAppTheme> GetThemeByIdAsync(int id)
+        public async Task<TAppTheme?> GetThemeByIdAsync(int id)
         {
             return await _context.TAppThemes
                 .FirstOrDefaultAsync(t => t.Id == id && t.Isdeleted == 0);
@@ -52,7 +52,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir tema bileşeninin detaylarını getiren metot
         // Tema bileşeni düzenleme sayfasında kullanılır
-        public async Task<TAppThemecomponent> GetThemeComponentByIdAsync(int componentId)
+        public async Task<TAppThemecomponent?> GetThemeComponentByIdAsync(int componentId)
         {
             return await _context.TAppThemecomponents
                 .FirstOrDefaultAsync(tc => tc.Id == componentId && tc.Isdeleted == 0);

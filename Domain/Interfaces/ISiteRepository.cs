@@ -11,7 +11,7 @@ namespace new_cms.Domain.Interfaces
         Task<IEnumerable<TAppSite>> GetAllSiteListAsync();
 
         // Belirtilen site ID'sine ait detaylı bilgileri döndürür. Site düzenleme sayfası için gerekli.
-        Task<TAppSite> GetSiteDetailAsync(int id);
+        Task<TAppSite?> GetSiteDetailAsync(int id);
 
         // Şablon olarak işaretlenmiş siteleri listeler. Yeni site oluştururken şablon seçimi için kullanılır.
         Task<IEnumerable<TAppSite>> GetTemplatesAsync();
@@ -20,7 +20,7 @@ namespace new_cms.Domain.Interfaces
         Task<bool> IsDomainUniqueAsync(string domain, int? excludeSiteId = null);
 
         // Alan adına göre site bilgisini getirir. Site yönlendirmesi için gerekli.
-        Task<TAppSite> GetByDomainAsync(string domain);
+        Task<TAppSite?> GetByDomainAsync(string domain);
 
         // Yayında olan siteleri listeler. Ön yüz erişimi için gerekli.
         Task<IEnumerable<TAppSite>> GetActiveSitesAsync();
@@ -29,8 +29,8 @@ namespace new_cms.Domain.Interfaces
         Task<(IEnumerable<TAppSite> Items, int TotalCount)> GetPagedSiteListAsync(
             int pageNumber,
             int pageSize,
-            string searchTerm = null,
-            string sortBy = null,
+            string? searchTerm = null,
+            string? sortBy = null,
             bool ascending = true);
     }
 } 

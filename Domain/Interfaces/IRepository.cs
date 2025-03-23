@@ -9,7 +9,7 @@ namespace new_cms.Domain.Interfaces
     public interface IRepository<T> where T : class  //Tüm repositoryler için genel CRUD yapısını.
     {
         // Belirtilen ID'ye sahip entity'yi getirir. Temel CRUD operasyonu için gerekli.
-        Task<T> GetByIdAsync(int id);
+        Task<T?> GetByIdAsync(int id);
 
         // Tüm entity'leri listeler. Genel listeleme işlemleri için kullanılır.
         Task<IEnumerable<T>> GetAllAsync();
@@ -35,8 +35,8 @@ namespace new_cms.Domain.Interfaces
 
         // Filtrelenmiş, sıralanmış ve ilişkili verileri içeren sonuçlar döndürür. Karmaşık sorgular için.
         Task<IEnumerable<T>> GetFilteredAsync(
-            Expression<Func<T, bool>> filter = null,
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             string includeProperties = "");
 
         // Çoklu entity ekleme işlemi yapar. Toplu veri ekleme senaryoları için performans optimizasyonu.
@@ -59,6 +59,6 @@ namespace new_cms.Domain.Interfaces
 
         // Belirtilen koşula uyan kayıt sayısını döndürür. 
         // Örn : Site sayfasının sayısını döndürmek için
-        Task<int> CountAsync(Expression<Func<T, bool>> predicate = null);
+        Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null);
     }
 } 

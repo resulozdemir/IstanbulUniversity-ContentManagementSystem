@@ -8,10 +8,10 @@ namespace new_cms.Domain.Interfaces
     public interface ISiteDomainRepository : IRepository<TAppSitedomain> //alan adı yönetimi için repository
     {
         // Belirtilen site ID'sine ait tüm alan adlarını listeler. Site alan adı yönetimi için gerekli.
-        Task<IEnumerable<SiteDomainDto>> GetDomainsBySiteIdAsync(int siteId);
+        Task<IEnumerable<TAppSitedomain>> GetDomainsBySiteIdAsync(int siteId);
 
         // Belirtilen alan adı ID'sine ait detayları döndürür. Alan adı düzenleme sayfası için gerekli.
-        Task<SiteDomainDto> GetDomainByIdAsync(int id);
+        Task<TAppSitedomain> GetDomainByIdAsync(int id);
 
         // Alan adının benzersiz olup olmadığını kontrol eder. Alan adı ekleme/düzenleme sırasında validasyon için.
         Task<bool> IsDomainUniqueAsync(string domain, int? excludeDomainId = null);
@@ -20,6 +20,6 @@ namespace new_cms.Domain.Interfaces
         Task<TAppSitedomain> GetByDomainAsync(string domain);
 
         // Belirtilen dildeki tüm alan adlarını listeler. Dil bazlı alan adı yönetimi için gerekli.
-        Task<IEnumerable<SiteDomainDto>> GetDomainsByLanguageAsync(string language);
+        Task<IEnumerable<TAppSitedomain>> GetDomainsByLanguageAsync(string language);
     }
 } 

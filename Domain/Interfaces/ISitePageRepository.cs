@@ -13,11 +13,11 @@ namespace new_cms.Domain.Interfaces
 
         // Belirtilen sayfa ID'sine ait detaylı bilgileri döndürür.
         // Sayfa düzenleme ve önizleme ekranları için gerekli.
-        Task<TAppSitepage> GetPageByIdAsync(int id);
+        Task<TAppSitepage?> GetPageByIdAsync(int id);
 
         // Belirtilen site ID'sine ait varsayılan (default) sayfayı döndürür.
         // Site ana sayfa yönlendirmesi ve varsayılan içerik gösterimi için gerekli.
-        Task<TAppSitepage> GetDefaultPageBySiteIdAsync(int siteId);
+        Task<TAppSitepage?> GetDefaultPageBySiteIdAsync(int siteId);
 
         // Sayfanın menülerde veya diğer içeriklerde kullanılıp kullanılmadığını kontrol eder.
         // Sayfa silme işlemi öncesi bağımlılık kontrolü için gerekli.
@@ -33,6 +33,6 @@ namespace new_cms.Domain.Interfaces
 
         // Belirtilen site ID ve yönlendirme adresine sahip sayfayı döndürür.
         // URL tabanlı sayfa yönlendirmesi ve içerik gösterimi için gerekli.
-        Task<TAppSitepage> GetPageByRoutingAsync(int siteId, string routing);
+        Task<TAppSitepage?> GetPageByRoutingAsync(int siteId, string routing);
     }
 } 

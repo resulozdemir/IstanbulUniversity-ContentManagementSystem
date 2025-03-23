@@ -18,45 +18,19 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir siteye ait tüm alan adlarını getiren metot
         // Site alan adı yönetim sayfasında kullanılır
-        public async Task<IEnumerable<SiteDomainDto>> GetDomainsBySiteIdAsync(int siteId)
+        public async Task<IEnumerable<TAppSitedomain>> GetDomainsBySiteIdAsync(int siteId)
         {
             return await _context.TAppSitedomains
                 .Where(d => d.Siteid == siteId && d.Isdeleted == 0)
-                .Select(d => new SiteDomainDto
-                {
-                    Id = d.Id,
-                    SiteId = d.Siteid,
-                    Domain = d.Domain,
-                    Language = d.Language,
-                    Key = d.Key,
-                    AnalyticId = d.Analyticid,
-                    GoogleSiteVerification = d.Googlesiteverification,
-                    IsDeleted = d.Isdeleted == 1
-                })
                 .ToListAsync();
         }
 
         // Belirli bir alan adının detaylarını getiren metot
         // Alan adı düzenleme sayfasında kullanılır
-        public async Task<SiteDomainDto> GetDomainByIdAsync(int id)
+        public async Task<TAppSitedomain> GetDomainByIdAsync(int id)
         {
-            var domain = await _context.TAppSitedomains
+            return await _context.TAppSitedomains
                 .FirstOrDefaultAsync(d => d.Id == id && d.Isdeleted == 0);
-
-            if (domain == null)
-                return null;
-
-            return new SiteDomainDto
-            {
-                Id = domain.Id,
-                SiteId = domain.Siteid,
-                Domain = domain.Domain,
-                Language = domain.Language,
-                Key = domain.Key,
-                AnalyticId = domain.Analyticid,
-                GoogleSiteVerification = domain.Googlesiteverification,
-                IsDeleted = domain.Isdeleted == 1
-            };
         }
 
         // Alan adının benzersiz olup olmadığını kontrol eden metot
@@ -84,21 +58,10 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         // Belirli bir dile ait tüm alan adlarını getiren metot
         // Dil bazlı alan adı yönetimi ve çoklu dil desteği için kullanılır
-        public async Task<IEnumerable<SiteDomainDto>> GetDomainsByLanguageAsync(string language)
+        public async Task<IEnumerable<TAppSitedomain>> GetDomainsByLanguageAsync(string language)
         {
             return await _context.TAppSitedomains
                 .Where(d => d.Language == language && d.Isdeleted == 0)
-                .Select(d => new SiteDomainDto
-                {
-                    Id = d.Id,
-                    SiteId = d.Siteid,
-                    Domain = d.Domain,
-                    Language = d.Language,
-                    Key = d.Key,
-                    AnalyticId = d.Analyticid,
-                    GoogleSiteVerification = d.Googlesiteverification,
-                    IsDeleted = d.Isdeleted == 1
-                })
                 .ToListAsync();
         }
     }

@@ -2,7 +2,7 @@ using new_cms.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace new_cms.Application.Interfaces
+namespace new_cms.Domain.Interfaces
 {
     public interface IContentGroupRepository  // İçerik grubu verileri için veritabanı işlemlerini tanımlayan interface
     {

@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using new_cms.Application.Interfaces;
 using new_cms.Domain.Entities;
-using new_cms.Infrastructure.Persistence.Repositories;
+using new_cms.Domain.Interfaces;
 
-namespace new_cms.Infrastructure.Repositories
+namespace new_cms.Infrastructure.Persistence.Repositories
 {
     // İçerik grubu yönetimi için veritabanı işlemlerini gerçekleştiren repository sınıfı haberler, sayfalar, blog yazıları vb.
     public class ContentGroupRepository : BaseRepository<TAppContentgroup>, IContentGroupRepository
@@ -16,7 +15,7 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // İçerik grubu ID ve Site ID'ye göre tek bir içerik grubu getir
-        public new async Task<TAppContentgroup> GetByIdAsync(int id, int siteId)
+        public async Task<TAppContentgroup> GetByIdAsync(int id, int siteId)
         {
             return await _dbSet
                 .FirstOrDefaultAsync(c => c.Id == id && c.Siteid == siteId && c.Isdeleted == 0);
@@ -53,13 +52,13 @@ namespace new_cms.Infrastructure.Repositories
         }
 
         // İçerik grubu ID ve Site ID'ye göre içerik grubu varlığını kontrol et
-        public new async Task<bool> ExistsAsync(int id, int siteId)
+        public async Task<bool> ExistsAsync(int id, int siteId)
         {
             return await _dbSet.AnyAsync(c => c.Id == id && c.Siteid == siteId && c.Isdeleted == 0);
         }
 
         // İçerik grubu ID ve Site ID'ye göre silme işlemi (Soft Delete)
-        public new async Task DeleteAsync(int id, int siteId)
+        public async Task DeleteAsync(int id, int siteId)
         {
             var contentGroup = await GetByIdAsync(id, siteId);
             if (contentGroup != null)

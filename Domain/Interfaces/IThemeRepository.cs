@@ -11,7 +11,7 @@ namespace new_cms.Domain.Interfaces
         Task<IEnumerable<TAppTheme>> GetAllThemesAsync();
 
         // Belirtilen tema ID'sine ait detayları döndürür. Tema düzenleme sayfası için gerekli.
-        Task<TAppTheme> GetThemeByIdAsync(int id);
+        Task<TAppTheme?> GetThemeByIdAsync(int id);
 
         // Belirtilen temaya ait bileşenleri listeler. Tema içerik yönetimi için gerekli.
         Task<IEnumerable<TAppThemecomponent>> GetThemeComponentsAsync(int themeId);
@@ -20,7 +20,7 @@ namespace new_cms.Domain.Interfaces
         Task<bool> IsThemeInUseAsync(int id);
 
         // Belirtilen tema bileşeninin detaylarını döndürür. Bileşen düzenleme sayfası için gerekli.
-        Task<TAppThemecomponent> GetThemeComponentByIdAsync(int componentId);
+        Task<TAppThemecomponent?> GetThemeComponentByIdAsync(int componentId);
 
         // Temaya eklenebilecek kullanılabilir bileşenleri listeler. Tema bileşen ekleme sayfası için gerekli.
         Task<IEnumerable<TAppComponent>> GetAvailableComponentsForThemeAsync(int themeId);
