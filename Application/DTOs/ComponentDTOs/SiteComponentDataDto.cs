@@ -32,6 +32,6 @@ namespace new_cms.Application.DTOs
         
         public int? ModifiedUser { get; set; }
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

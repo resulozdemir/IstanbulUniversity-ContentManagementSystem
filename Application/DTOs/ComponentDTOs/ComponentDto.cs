@@ -18,6 +18,6 @@ namespace new_cms.Application.DTOs
 
         public string? FormJson { get; set; }  // JSON formatında form verileri
 
-        public bool? IsDeleted { get; set; } = false;  // Soft delete için
+        public int Isdeleted { get; set; } = 0;  // Soft delete için
     }
 }

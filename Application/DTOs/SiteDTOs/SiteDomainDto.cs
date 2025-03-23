@@ -27,6 +27,6 @@ namespace new_cms.Application.DTOs
         [MaxLength(200)]
         public string? GoogleSiteVerification { get; set; }  // Google doğrulama kodu
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

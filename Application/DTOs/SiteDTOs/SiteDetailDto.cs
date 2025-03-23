@@ -25,9 +25,9 @@ namespace new_cms.Application.DTOs
         
         public required string GoogleSiteVerification { get; set; }
         
-        public bool IsTemplate { get; set; }
+        public int Istemplate { get; set; }
         
-        public bool IsPublish { get; set; }
+        public int Ispublish { get; set; }
         
         public DateTime? CreatedDate { get; set; }
         

@@ -14,6 +14,6 @@ namespace new_cms.Application.DTOs
 
         public string? Footer { get; set; }  // Footer şablonu
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

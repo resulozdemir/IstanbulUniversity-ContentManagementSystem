@@ -36,7 +36,7 @@ namespace new_cms.Application.DTOs
         
         public string? GoogleSiteVerification { get; set; }  
 
-        public bool IsPublish { get; set; } = false; 
+        public int Ispublish { get; set; } = 0; 
         
         public DateTime? CreatedDate { get; set; }
         
@@ -46,6 +46,6 @@ namespace new_cms.Application.DTOs
         
         public int? ModifiedUser { get; set; }
 
-        public bool IsDeleted { get; set; } = false; 
+        public int Isdeleted { get; set; } = 0; 
     }
 }

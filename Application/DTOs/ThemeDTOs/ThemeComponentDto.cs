@@ -30,6 +30,6 @@ namespace new_cms.Application.DTOs
 
         public string? FormJs { get; set; }  // Form için Javascript
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

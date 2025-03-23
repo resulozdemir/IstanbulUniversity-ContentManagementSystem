@@ -28,14 +28,14 @@ namespace new_cms.Application.DTOs
 
         public DateTime? EndDate { get; set; }  // Bitiş tarihi
 
-        public bool IsFeatured { get; set; } = false;  // Öne çıkan haber mi?
+        public int Isfeatured { get; set; } = 0;  // Öne çıkan haber mi?
 
         public int ViewCount { get; set; } = 0;  // Görüntüleme sayısı
 
-        public bool IsPublish { get; set; } = true;  // Yayında mı?
+        public int Ispublish { get; set; } = 1;  // Yayında mı?
 
         public int? OrderBy { get; set; }  // Sıralama
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

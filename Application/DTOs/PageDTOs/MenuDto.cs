@@ -21,12 +21,12 @@ namespace new_cms.Application.DTOs
         [MaxLength(100)]
         public string? Icon { get; set; }  // İkon
 
-        public bool OpenInNewTab { get; set; } = false;  // Yeni sekmede açılsın mı?
+        public int Openinnewtab { get; set; } = 0;  // Yeni sekmede açılsın mı?
 
         public int? OrderBy { get; set; }  // Sıralama değeri
 
-        public bool IsVisible { get; set; } = true;  // Görünür mü?
+        public int Isvisible { get; set; } = 1;  // Görünür mü?
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

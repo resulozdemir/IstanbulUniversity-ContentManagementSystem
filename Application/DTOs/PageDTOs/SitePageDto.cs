@@ -15,7 +15,7 @@ namespace new_cms.Application.DTOs
 
         public int? TemplateId { get; set; }  // Şablon ID'si
 
-        public bool IsDefault { get; set; } = false;  // Varsayılan sayfa mı?
+        public int Isdefault { get; set; } = 0;  // Varsayılan sayfa mı?
 
         public string? Html { get; set; }  // HTML içeriği
 
@@ -32,10 +32,10 @@ namespace new_cms.Application.DTOs
         [MaxLength(50)]
         public string? Routing { get; set; }  // Yönlendirme yolu
 
-        public bool VirtualPage { get; set; } = false;  // Sanal sayfa mı?
+        public int Virtualpage { get; set; } = 0;  // Sanal sayfa mı?
 
-        public bool ReadOnly { get; set; } = false;  // Salt okunur mu?
+        public int Readonly { get; set; } = 0;  // Salt okunur mu?
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

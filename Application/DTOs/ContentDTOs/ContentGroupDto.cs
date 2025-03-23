@@ -20,8 +20,8 @@ namespace new_cms.Application.DTOs
 
         public int? OrderBy { get; set; }  // Sıralama değeri
 
-        public bool IsVisible { get; set; } = true;  // Görünür mü?
+        public int Isvisible { get; set; } = 1;  // Görünür mü?
 
-        public bool? IsDeleted { get; set; } = false;  // Varsayılan olarak false
+        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 
