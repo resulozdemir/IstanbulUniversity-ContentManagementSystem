@@ -7,11 +7,11 @@ namespace new_cms.Domain.Interfaces
 {
     public interface ISiteRepository : IRepository<TAppSite> //site islemleri icin (listeleme, göruntuleme)
     {
-        // Tüm sitelerin listesini DTO formatında döndürür. Site yönetim paneli ana sayfası için gerekli.
-        Task<IEnumerable<SiteListDto>> GetAllSiteListAsync();
+        // Tüm sitelerin listesini entity formatında döndürür. Site yönetim paneli ana sayfası için gerekli.
+        Task<IEnumerable<TAppSite>> GetAllSiteListAsync();
 
         // Belirtilen site ID'sine ait detaylı bilgileri döndürür. Site düzenleme sayfası için gerekli.
-        Task<SiteDetailDto> GetSiteDetailAsync(int id);
+        Task<TAppSite> GetSiteDetailAsync(int id);
 
         // Şablon olarak işaretlenmiş siteleri listeler. Yeni site oluştururken şablon seçimi için kullanılır.
         Task<IEnumerable<TAppSite>> GetTemplatesAsync();
@@ -26,7 +26,7 @@ namespace new_cms.Domain.Interfaces
         Task<IEnumerable<TAppSite>> GetActiveSitesAsync();
 
         // Sayfalanmış ve filtrelenmiş site listesini döndürür. Site yönetim paneli listeleme sayfası için.
-        Task<(IEnumerable<SiteListDto> Items, int TotalCount)> GetPagedSiteListAsync(
+        Task<(IEnumerable<TAppSite> Items, int TotalCount)> GetPagedSiteListAsync(
             int pageNumber,
             int pageSize,
             string searchTerm = null,

@@ -7,22 +7,22 @@ namespace new_cms.Domain.Interfaces
 {
     public interface IThemeRepository : IRepository<TAppTheme> //telamaların yonetimi
     {
-        // Tüm temaları DTO formatında listeler. Tema yönetim sayfası için gerekli.
-        Task<IEnumerable<ThemeDto>> GetAllThemesAsync();
+        // Tüm temaları entity formatında listeler. Tema yönetim sayfası için gerekli.
+        Task<IEnumerable<TAppTheme>> GetAllThemesAsync();
 
         // Belirtilen tema ID'sine ait detayları döndürür. Tema düzenleme sayfası için gerekli.
-        Task<ThemeDto> GetThemeByIdAsync(int id);
+        Task<TAppTheme> GetThemeByIdAsync(int id);
 
         // Belirtilen temaya ait bileşenleri listeler. Tema içerik yönetimi için gerekli.
-        Task<IEnumerable<ThemeComponentDto>> GetThemeComponentsAsync(int themeId);
+        Task<IEnumerable<TAppThemecomponent>> GetThemeComponentsAsync(int themeId);
 
         // Temanın herhangi bir sitede kullanılıp kullanılmadığını kontrol eder. Tema silme işlemi öncesi kontrol için.
         Task<bool> IsThemeInUseAsync(int id);
 
         // Belirtilen tema bileşeninin detaylarını döndürür. Bileşen düzenleme sayfası için gerekli.
-        Task<ThemeComponentDto> GetThemeComponentByIdAsync(int componentId);
+        Task<TAppThemecomponent> GetThemeComponentByIdAsync(int componentId);
 
         // Temaya eklenebilecek kullanılabilir bileşenleri listeler. Tema bileşen ekleme sayfası için gerekli.
-        Task<IEnumerable<ThemeComponentDto>> GetAvailableComponentsForThemeAsync(int themeId);
+        Task<IEnumerable<TAppComponent>> GetAvailableComponentsForThemeAsync(int themeId);
     }
 } 

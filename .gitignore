@@ -34,6 +34,7 @@ msbuild.wrn
 *.userprefs
 .cursorrules
 .globalrules.md
+.windsurfrules
 
 # Rider
 .idea/

@@ -26,8 +26,7 @@ namespace new_cms.Infrastructure.Repositories
         public async Task<IEnumerable<TAppContentgroup>> GetActiveContentGroupsAsync(int siteId)
         {
             return await _dbSet
-                .Where(c => c.Siteid == siteId && c.Isdeleted == 0 && c.Isactive == 1)
-                .OrderBy(c => c.Order)
+                .Where(c => c.Siteid == siteId && c.Isdeleted == 0)
                 .ToListAsync();
         }
 
@@ -36,7 +35,6 @@ namespace new_cms.Infrastructure.Repositories
         {
             return await _dbSet
                 .Where(c => c.Siteid == siteId && c.Isdeleted == 0)
-                .OrderBy(c => c.Order)
                 .ToListAsync();
         }
 
@@ -44,7 +42,7 @@ namespace new_cms.Infrastructure.Repositories
         public async Task<TAppContentgroup> GetByRoutingAsync(string routing, int siteId)
         {
             return await _dbSet
-                .FirstOrDefaultAsync(c => c.Routing == routing && c.Siteid == siteId && c.Isdeleted == 0 && c.Isactive == 1);
+                .FirstOrDefaultAsync(c => c.Routing == routing && c.Siteid == siteId && c.Isdeleted == 0);
         }
 
         // Site ID'ye göre toplam içerik grubu sayısını getir

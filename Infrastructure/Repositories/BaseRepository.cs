@@ -109,7 +109,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
                 query = query.Where(filter);
             }
 
-            foreach (var includeProperty in includeProperties.Split
+            foreach (var includeProperty in includeProperties.Split  //Components,Category
                 (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
