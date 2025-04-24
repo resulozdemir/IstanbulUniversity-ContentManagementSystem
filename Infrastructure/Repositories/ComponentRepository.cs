@@ -22,7 +22,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<TAppComponent>> GetAllComponentsAsync()
         {
             return await _context.TAppComponents
-                .Where(c => c.Isdeleted == 0)
+                .Where(c => c.IsDeleted == 0)
                 .ToListAsync();
         }
 
@@ -31,7 +31,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<TAppComponent?> GetComponentByIdAsync(int id)
         {
             return await _context.TAppComponents
-                .FirstOrDefaultAsync(c => c.Id == id && c.Isdeleted == 0);
+                .FirstOrDefaultAsync(c => c.Id == id && c.IsDeleted == 0);
         }
 
         // Bileşenin herhangi bir temada kullanılıp kullanılmadığını kontrol eden metot
@@ -47,7 +47,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<TAppComponent>> GetComponentsByTypeAsync(string type)
         {
             return await _context.TAppComponents
-                .Where(c => c.Name.Contains(type) && c.Isdeleted == 0)
+                .Where(c => c.Name.Contains(type) && c.IsDeleted == 0)
                 .ToListAsync();
         }
 

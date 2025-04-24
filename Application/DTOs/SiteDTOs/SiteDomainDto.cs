@@ -1,7 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.SiteDTOs
 {
+    /// Site domain bilgilerini taşıyan DTO
     public class SiteDomainDto //domain bilgilerini taşır
     {
         public int? Id { get; set; }  // Create için null olabilir
@@ -27,6 +28,6 @@ namespace new_cms.Application.DTOs
         [MaxLength(200)]
         public string? GoogleSiteVerification { get; set; }  // Google doğrulama kodu
 
-        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
+        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0
     }
 } 

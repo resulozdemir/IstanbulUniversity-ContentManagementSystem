@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.PageDTOs
 {
+    /// Site sayfa bilgilerini taşıyan DTO
     public class SitePageDto //sayfaların yapısal bilgilerini taşır html, css, javascript vs.
     {
         public int? Id { get; set; }  // Create için null olabilir
@@ -36,6 +38,13 @@ namespace new_cms.Application.DTOs
 
         public int Readonly { get; set; } = 0;  // Salt okunur mu?
 
-        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
+        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0
+
+        public string Url { get; set; } = string.Empty;
+        public string Template { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Keywords { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
     }
 } 

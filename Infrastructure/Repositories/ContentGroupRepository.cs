@@ -18,14 +18,14 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<TAppContentgroup> GetByIdAsync(int id, int siteId)
         {
             return await _dbSet
-                .FirstOrDefaultAsync(c => c.Id == id && c.Siteid == siteId && c.Isdeleted == 0);
+                .FirstOrDefaultAsync(c => c.Id == id && c.Siteid == siteId && c.IsDeleted == 0);
         }
 
         // Site ID'ye göre aktif içerik gruplarını getir
         public async Task<IEnumerable<TAppContentgroup>> GetActiveContentGroupsAsync(int siteId)
         {
             return await _dbSet
-                .Where(c => c.Siteid == siteId && c.Isdeleted == 0)
+                .Where(c => c.Siteid == siteId && c.IsDeleted == 0)
                 .ToListAsync();
         }
 
@@ -33,7 +33,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<TAppContentgroup>> GetBySiteIdAsync(int siteId)
         {
             return await _dbSet
-                .Where(c => c.Siteid == siteId && c.Isdeleted == 0)
+                .Where(c => c.Siteid == siteId && c.IsDeleted == 0)
                 .ToListAsync();
         }
 
@@ -41,20 +41,20 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         public async Task<TAppContentgroup> GetByRoutingAsync(string routing, int siteId)
         {
             return await _dbSet
-                .FirstOrDefaultAsync(c => c.Routing == routing && c.Siteid == siteId && c.Isdeleted == 0);
+                .FirstOrDefaultAsync(c => c.Routing == routing && c.Siteid == siteId && c.IsDeleted == 0);
         }
 
         // Site ID'ye göre toplam içerik grubu sayısını getir
         public async Task<int> GetTotalCountAsync(int siteId)
         {
             return await _dbSet
-                .CountAsync(c => c.Siteid == siteId && c.Isdeleted == 0);
+                .CountAsync(c => c.Siteid == siteId && c.IsDeleted == 0);
         }
 
         // İçerik grubu ID ve Site ID'ye göre içerik grubu varlığını kontrol et
         public async Task<bool> ExistsAsync(int id, int siteId)
         {
-            return await _dbSet.AnyAsync(c => c.Id == id && c.Siteid == siteId && c.Isdeleted == 0);
+            return await _dbSet.AnyAsync(c => c.Id == id && c.Siteid == siteId && c.IsDeleted == 0);
         }
 
         // İçerik grubu ID ve Site ID'ye göre silme işlemi (Soft Delete)
@@ -63,7 +63,7 @@ namespace new_cms.Infrastructure.Persistence.Repositories
             var contentGroup = await GetByIdAsync(id, siteId);
             if (contentGroup != null)
             {
-                contentGroup.Isdeleted = 1;
+                contentGroup.IsDeleted = 1;
                 await UpdateAsync(contentGroup);
             }
         }

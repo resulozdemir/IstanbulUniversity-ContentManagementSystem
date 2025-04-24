@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.PageDTOs
 {
     public class PageTreeDto //sayfa hiyerarşisi için dto
     {

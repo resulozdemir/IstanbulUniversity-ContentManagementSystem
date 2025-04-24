@@ -1,8 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.ContentDTOs
 {
-    public class ContentPageDto //içerik sayfalarının verilerini taşır, başlık, içerik, hangi sayfaya ait, link.
+    /// İçerik sayfası oluşturma ve güncelleme işlemleri için kullanılan DTO
+    public class ContentPageDto
     {
         public int? Id { get; set; }  // Create için null olabilir
 
@@ -13,20 +16,40 @@ namespace new_cms.Application.DTOs
         public int GroupId { get; set; }  // İçerik grubu ID'si
 
         [Required]
-        [MaxLength(200)]
-        public required string Header { get; set; }  // Başlık
+        [StringLength(200)]
+        public string Header { get; set; } = string.Empty;  // Başlık
 
         public string? Content { get; set; }  // Ana içerik
 
-        public string? ContentDev { get; set; }  // Geliştirme ortamı içeriği
+        public int? OrderBy { get; set; }  // Sıralama değeri
+
+        [StringLength(500)]
+        public string? Link { get; set; }  // Bağlantı URL'si
+
+        public string? ContentDev { get; set; }  // İlave içerik alanı
 
         public string? ContentInner { get; set; }  // İç içerik
 
-        public int? OrderBy { get; set; }  // Sıralama değeri
+        public int IsDeleted { get; set; } = 0;  // Silinme durumu, 0: aktif, 1: silinmiş
 
-        [MaxLength(500)]
-        public string? Link { get; set; }  // Bağlantı URL'si
+        // API için ek alanlar - veritabanında olmayan
+        [StringLength(500)]
+        public string? Summary { get; set; }  // İçerik özeti
 
-        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
+        [StringLength(500)]
+        public string? Keywords { get; set; }  // SEO anahtar kelimeleri
+
+        [StringLength(500)]
+        public string? Description { get; set; }  // SEO açıklaması
+
+        public DateTime? PublishDate { get; set; }  // Yayın tarihi
+
+        [StringLength(255)]
+        public string? ImageUrl { get; set; }  // Kapak görseli URL'si
+
+        [StringLength(100)]
+        public string? Author { get; set; }  // Yazar bilgisi
+
+        public List<string> Tags { get; set; } = new List<string>();  // Etiketler
     }
 } 

@@ -4,13 +4,11 @@ using System.Threading.Tasks;
 
 namespace new_cms.Domain.Interfaces
 {
-    public interface IEventRepository  // Etkinlik verileri için veritabanı işlemlerini tanımlayan interface
+    // Etkinlik verileri için veritabanı işlemlerini tanımlayan interface, IRepository'den türetilmiştir.
+    public interface IEventRepository : IRepository<TAppEvent>
     {
-        // Belirli bir etkinliği ID ve site ID'ye göre getirir
-        Task<TAppEvent> GetByIdAsync(int id, int siteId);
-
-        // Tüm etkinlikleri getirir
-        Task<IEnumerable<TAppEvent>> GetAllAsync();
+        // Belirli bir etkinliği ID ve site ID'ye göre getirir. IRepository'deki GetByIdAsync'tan farklı olarak siteId kontrolü yapar.
+        Task<TAppEvent?> GetByIdAsync(int id, int siteId);
 
         // Belirli bir siteye ait tüm etkinlikleri getirir
         Task<IEnumerable<TAppEvent>> GetBySiteIdAsync(int siteId);
@@ -18,22 +16,16 @@ namespace new_cms.Domain.Interfaces
         // Belirli bir siteye ait aktif etkinlikleri getirir
         Task<IEnumerable<TAppEvent>> GetActiveEventsAsync(int siteId);
 
-        // Yeni bir etkinlik ekler
-        Task<TAppEvent> AddAsync(TAppEvent events);
-
-        // Mevcut bir etkinliği günceller
-        Task<TAppEvent> UpdateAsync(TAppEvent events);
-
-        // Belirli bir etkinliği siler (soft delete)
+        // Belirli bir etkinliği siler (soft delete). IRepository'deki DeleteAsync'tan farklı olarak siteId kontrolü yapar.
         Task DeleteAsync(int id, int siteId);
         
         // Belirli bir siteye ait en son etkinlikleri belirtilen sayıda getirir
         Task<IEnumerable<TAppEvent>> GetLatestEventsAsync(int siteId, int count);
 
-        // Belirli bir etkinliğin varlığını kontrol eder
+        // Belirli bir etkinliğin varlığını kontrol eder. IRepository'deki ExistsAsync'tan farklı olarak siteId kontrolü yapar.
         Task<bool> ExistsAsync(int id, int siteId);
 
-        // Belirli bir siteye ait toplam etkinlik sayısını getirir
+        // Belirli bir siteye ait toplam etkinlik sayısını getirir. IRepository'deki CountAsync'tan farklı olarak siteId bazlı sayım yapar.
         Task<int> GetTotalCountAsync(int siteId);
     }
 }

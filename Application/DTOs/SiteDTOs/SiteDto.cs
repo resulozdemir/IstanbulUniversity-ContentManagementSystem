@@ -1,51 +1,46 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.SiteDTOs
 {
-    public class SiteDto //site bilgileri
+    /// Site oluşturma ve güncelleme işlemleri için kullanılan DTO
+    public class SiteDto
     {
-        public int? Id { get; set; }  // Hem olusturma hem guncelleme için kullanilir, create için null olabilir.
+        public int? Id { get; set; }  // Create için null olabilir
 
         [Required]
-        [MaxLength(255)]
-        public required string Name { get; set; }
+        [StringLength(500)]
+        public string Name { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(255)]
-        public required string Domain { get; set; }
+        [StringLength(100)]
+        public string Domain { get; set; } = string.Empty;
 
         [Required]
-        public int TemplateId { get; set; }  //site şablonu
+        public int? TemplateId { get; set; }  // Templatid: site şablonu
 
         [Required]
-        public int ThemeId { get; set; } //renkler fontlar vs.
+        public int ThemeId { get; set; }  // Themeid: renkler fontlar vs.
 
-        [MaxLength(10)]
-        public required string Language { get; set; } = "tr";  
+        [StringLength(200)]
+        public string Language { get; set; } = "tr";
 
-        public string? AnalyticId { get; set; }  
+        [StringLength(200)]
+        public string? AnalyticId { get; set; }
 
-        public int? PbysId { get; set; }  
+        public int? PbysId { get; set; }
         
-        [MaxLength(50)]
-        public string? Key { get; set; } 
+        [StringLength(50)]
+        public string? Key { get; set; }
         
-        [MaxLength(400)]
-        public string? WpAddress { get; set; }  
+        [StringLength(400)]
+        public string? WpAddress { get; set; }  // Wpadress
         
-        public string? GoogleSiteVerification { get; set; }  
+        [StringLength(200)]
+        public string? GoogleSiteVerification { get; set; }
 
-        public int Ispublish { get; set; } = 0; 
-        
-        public DateTime? CreatedDate { get; set; }
-        
-        public int? CreatedUser { get; set; }
-        
-        public DateTime? ModifiedDate { get; set; }
-        
-        public int? ModifiedUser { get; set; }
+        public int IsPublish { get; set; } = 0;
 
-        public int Isdeleted { get; set; } = 0; 
+        public int IsDeleted { get; set; } = 0;
     }
 }

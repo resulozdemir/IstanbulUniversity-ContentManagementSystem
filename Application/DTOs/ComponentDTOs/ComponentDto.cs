@@ -1,23 +1,18 @@
-using System.ComponentModel.DataAnnotations;
+using System;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.ComponentDTOs
 {
-    public class ComponentDto   //bileşenin genel yapısını taşır.
+    /// Bileşen bilgilerini taşıyan DTO
+    public class ComponentDto
     {
-        public int? Id { get; set; } // Create için null olabilir
-
-        [Required]
-        [MaxLength(255)]
-        public required string Name { get; set; }  // Bileşen adı
-
-        public string? Description { get; set; }  // Açıklama (opsiyonel)
-
-        public string? Template { get; set; }  // Şablon bilgisi (opsiyonel)
-
-        public string? Style { get; set; }  // CSS veya özel stiller
-
-        public string? FormJson { get; set; }  // JSON formatında form verileri
-
-        public int Isdeleted { get; set; } = 0;  // Soft delete için
+        public int? Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Template { get; set; } = string.Empty;
+        public string Style { get; set; } = string.Empty;
+        public string Script { get; set; } = string.Empty;
+        public string FormJson { get; set; } = string.Empty;
+        public int ComponentType { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

@@ -1,6 +1,7 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.ContentDTOs
 {
     public class ContentGroupDto //içerik gruplarını taşır. İçerikleri kategorize etmek için kullanılır
     {
@@ -11,7 +12,7 @@ namespace new_cms.Application.DTOs
 
         [Required]
         [MaxLength(200)]
-        public required string Name { get; set; }  // Grup adı
+        public string Name { get; set; } = string.Empty;  // Grup adı
 
         [MaxLength(500)]
         public string? Description { get; set; }  // Açıklama
@@ -22,6 +23,10 @@ namespace new_cms.Application.DTOs
 
         public int Isvisible { get; set; } = 1;  // Görünür mü?
 
-        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
+        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0
+
+        public bool IsActive { get; set; } = true;
+
+        public int? SortOrder { get; set; }
     }
 } 

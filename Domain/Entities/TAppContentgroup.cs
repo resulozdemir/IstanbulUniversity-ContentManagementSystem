@@ -8,7 +8,7 @@ namespace new_cms.Domain.Entities;
 
 [Table("T_APP_CONTENTGROUP")]
 [Index("Id", Name = "T_APP_CONTENTGROUP_PK", IsUnique = true)]
-[Index("Isdeleted", "Siteid", "Routing", Name = "T_APP_CONTENTGROUP_UK1", IsUnique = true)]
+[Index("IsDeleted", "Siteid", "Routing", Name = "T_APP_CONTENTGROUP_UK1", IsUnique = true)]
 public partial class TAppContentgroup
 {
     [Key]
@@ -68,7 +68,7 @@ public partial class TAppContentgroup
     public int? Modifieduser { get; set; }
 
     [Column("ISDELETED")]
-    public int Isdeleted { get; set; }
+    public int IsDeleted { get; set; }
 
     [ForeignKey("Siteid")]
     [InverseProperty("TAppContentgroups")]

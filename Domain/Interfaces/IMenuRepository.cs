@@ -4,13 +4,11 @@ using System.Threading.Tasks;
 
 namespace new_cms.Domain.Interfaces
 {
-    public interface IMenuRepository  // Menü verileri için veritabanı işlemlerini tanımlayan interface
+    // Menü verileri için veritabanı işlemlerini tanımlayan interface, IRepository'den türetilmiştir.
+    public interface IMenuRepository : IRepository<TAppMenu>
     {
-        // Belirli bir menüyü ID ve site ID'ye göre getirir
-        Task<TAppMenu> GetByIdAsync(int id, int siteId);
-
-        // Tüm menüleri getirir
-        Task<IEnumerable<TAppMenu>> GetAllAsync();
+        // Belirli bir menüyü ID ve site ID'ye göre getirir. IRepository'deki GetByIdAsync'tan farklı olarak siteId kontrolü yapar.
+        Task<TAppMenu?> GetByIdAsync(int id, int siteId);
 
         // Belirli bir siteye ait tüm menüleri getirir
         Task<IEnumerable<TAppMenu>> GetBySiteIdAsync(int siteId);
@@ -27,19 +25,10 @@ namespace new_cms.Domain.Interfaces
         // Belirli bir gruba ait menüleri getirir
         Task<IEnumerable<TAppMenu>> GetMenusByGroupIdAsync(int groupId, int siteId);
 
-        // Yeni bir menü ekler
-        Task<TAppMenu> AddAsync(TAppMenu menu);
-
-        // Mevcut bir menüyü günceller
-        Task<TAppMenu> UpdateAsync(TAppMenu menu);
-
-        // Belirli bir menüyü siler (soft delete)
+        // Belirli bir menüyü siler (soft delete). IRepository'deki DeleteAsync'tan farklı olarak siteId kontrolü yapar.
         Task DeleteAsync(int id, int siteId);
 
-        // Belirli bir menünün varlığını kontrol eder
+        // Belirli bir menünün varlığını kontrol eder. IRepository'deki ExistsAsync'tan farklı olarak siteId kontrolü yapar.
         Task<bool> ExistsAsync(int id, int siteId);
-
-        // Belirli bir siteye ait toplam menü sayısını getirir
-        Task<int> GetTotalCountAsync(int siteId);
     }
 }

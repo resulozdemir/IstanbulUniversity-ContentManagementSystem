@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.ThemeDTOs
 {
+    /// Tema bileşenlerini taşıyan DTO
     public class ThemeComponentDto // tema bileşenlerinin şablon yapılarını saklar (ad, description, template, style, javascript, formjson)
     {
         public int? Id { get; set; }  // Create için null olabilir
@@ -15,6 +17,8 @@ namespace new_cms.Application.DTOs
         [Required]
         [MaxLength(200)]
         public required string Name { get; set; }  // Bileşen adı
+        
+        public string? ComponentName { get; set; }  // Bağlı bileşenin adı (ilişkili tablodaki)
 
         public string? Description { get; set; }  // Açıklama
 
@@ -30,6 +34,12 @@ namespace new_cms.Application.DTOs
 
         public string? FormJs { get; set; }  // Form için Javascript
 
-        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
+        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0
+
+        public string Settings { get; set; } = string.Empty;
+
+        public int OrderBy { get; set; }
+
+        public bool IsActive { get; set; } = true;
     }
 } 

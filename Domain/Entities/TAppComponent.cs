@@ -72,5 +72,5 @@ public partial class TAppComponent
     public int? Modifieduser { get; set; }
 
     [Column("ISDELETED")]
-    public int Isdeleted { get; set; }
+    public int IsDeleted { get; set; }
 }

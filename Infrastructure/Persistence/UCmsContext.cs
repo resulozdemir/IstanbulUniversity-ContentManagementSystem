@@ -23,7 +23,7 @@ public partial class UCmsContext : DbContext
 
     public virtual DbSet<TAppContentpage> TAppContentpages { get; set; }
 
-    public virtual DbSet<TAppContentpage2> TAppContentpage2s { get; set; }
+    public virtual DbSet<TAppContentpage200429> TAppContentpage2s { get; set; }
 
     public virtual DbSet<TAppContentpage200429> TAppContentpage200429s { get; set; }
 

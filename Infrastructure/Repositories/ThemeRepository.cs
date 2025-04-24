@@ -22,15 +22,24 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         {
             return await _context.TAppThemes
                 .Where(t => t.Isdeleted == 0)
+                .OrderBy(t => t.Name)
                 .ToListAsync();
         }
 
         // Belirli bir temanın detaylarını getiren metot
         // Tema düzenleme sayfasında kullanılır
-        public async Task<TAppTheme?> GetThemeByIdAsync(int id)
+        public async Task<TAppTheme?> GetByIdAsync(int id)
         {
             return await _context.TAppThemes
                 .FirstOrDefaultAsync(t => t.Id == id && t.Isdeleted == 0);
+        }
+
+        // Belirli bir temanın detaylarını getiren metot (IThemeRepository arayüzü için eklendi)
+        // Tema düzenleme sayfasında kullanılır
+        public async Task<TAppTheme?> GetThemeByIdAsync(int id)
+        {
+            // Mevcut GetByIdAsync metodunu çağırır.
+            return await GetByIdAsync(id);
         }
 
         // Belirli bir temaya ait bileşenleri getiren metot
@@ -39,6 +48,8 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         {
             return await _context.TAppThemecomponents
                 .Where(tc => tc.Themeid == themeId && tc.Isdeleted == 0)
+                // property yok
+                //.Include(tc => tc.Component) 
                 .ToListAsync();
         }
 
@@ -62,17 +73,15 @@ namespace new_cms.Infrastructure.Persistence.Repositories
         // Tema bileşeni ekleme sayfasında kullanılır
         public async Task<IEnumerable<TAppComponent>> GetAvailableComponentsForThemeAsync(int themeId)
         {
-            // Önce temanın mevcut bileşenlerini al
-            var themeComponents = await _context.TAppThemecomponents
+            // Temaya ait mevcut bileşenlerin ID'lerini al
+            var usedComponentIds = await _context.TAppThemecomponents
                 .Where(tc => tc.Themeid == themeId && tc.Isdeleted == 0)
+                .Select(tc => tc.Componentid) // Sadece Componentid'leri seç
                 .ToListAsync();
 
-            // Kullanılmayan bileşen tiplerini bul
-            var usedComponentIds = themeComponents.Select(tc => tc.Componentid).ToList();
-
-            // Kullanılmayan bileşenleri getir
+            // Kullanılmayan bileşenleri getir 
             return await _context.TAppComponents
-                .Where(c => !usedComponentIds.Contains(c.Id) && c.Isdeleted == 0)
+                .Where(c => !usedComponentIds.Contains(c.Id) && c.IsDeleted == 0)
                 .ToListAsync();
         }
     }

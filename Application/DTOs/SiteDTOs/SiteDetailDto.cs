@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using new_cms.Application.DTOs.ThemeDTOs;
+using new_cms.Application.DTOs.PageDTOs;
+using new_cms.Application.DTOs.ComponentDTOs;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.SiteDTOs
 {
+    /// Sitenin kapsamlı bilgilerini taşıyan DTO
     public class SiteDetailDto //sitenin kapsamlı bilgilerini taşır. Sayfalar, bileşenler komponentleri vs.
     {
         public int Id { get; set; }

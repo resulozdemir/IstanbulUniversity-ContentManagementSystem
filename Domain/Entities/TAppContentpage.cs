@@ -60,7 +60,7 @@ public partial class TAppContentpage
     public int? Modifieduser { get; set; }
 
     [Column("ISDELETED")]
-    public int Isdeleted { get; set; }
+    public int IsDeleted { get; set; }
 
     [Column("CONTENTDEV")]
     public string? Contentdev { get; set; }

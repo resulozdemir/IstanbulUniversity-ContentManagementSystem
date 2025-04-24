@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.SiteDTOs
 {
+    /// Site listesi görünümü için özet bilgileri içeren DTO
     public class SiteListDto //siteleri listelerken site hakkında daha falz bilgi saylamak için kullanılır sayfa sayısı haber sayısı gibi.
     {
         public int Id { get; set; }

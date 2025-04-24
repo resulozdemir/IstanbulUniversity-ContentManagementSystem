@@ -1,8 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace new_cms.Application.DTOs
+namespace new_cms.Application.DTOs.ComponentDTOs
 {
+    /// Site bileşen verisini taşıyan DTO
     public class SiteComponentDataDto //site'nin bileşen verileri (header slider, news, event, content, menu)
     {
         public int? Id { get; set; }  // Create için null olabilir
@@ -12,6 +13,10 @@ namespace new_cms.Application.DTOs
 
         [Required]
         public int ThemeComponentId { get; set; }  // Tema bileşeni ID'si
+        
+        public int? ComponentId { get; set; }  // Bileşen ID'si (ilişkili tablodaki)
+        
+        public string? ComponentName { get; set; }  // Bileşenin adı (ilişkili tablodaki)
 
         public string? Data { get; set; }  // Bileşen verisi (HTML, JSON vb.)
 
@@ -22,8 +27,7 @@ namespace new_cms.Application.DTOs
         public string? Column3 { get; set; }  // Ek veri alanı 3
 
         public string? Column4 { get; set; }  // Ek veri alanı 4
-        
-        // Denetim alanları
+
         public DateTime? CreatedDate { get; set; }
         
         public int? CreatedUser { get; set; }
@@ -32,6 +36,12 @@ namespace new_cms.Application.DTOs
         
         public int? ModifiedUser { get; set; }
 
-        public int Isdeleted { get; set; } = 0;  // Varsayılan olarak 0
+        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0
+
+        public string DataJson { get; set; } = string.Empty;
+        public string Settings { get; set; } = string.Empty;
+        public int PageId { get; set; }
+        public int OrderBy { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 } 
