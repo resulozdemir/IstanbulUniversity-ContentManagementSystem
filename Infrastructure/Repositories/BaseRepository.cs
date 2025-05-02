@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using new_cms.Domain.Entities;
@@ -19,29 +20,29 @@ namespace new_cms.Infrastructure.Persistence.Repositories
 
         public BaseRepository(UCmsContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = context.Set<T>();
         }
 
-        // ID'ye göre tekil kayıt getirme
+        /// Belirtilen ID'ye sahip entity'yi asenkron olarak getirir.
         public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        // Tüm kayıtları listeleme
-        public virtual async Task<IEnumerable<T>> GetAllAsync()  //IEnumerable sadece ileriye donuk listeleme yapmak icin kullanilir.
+        /// Tüm entity'leri asenkron olarak listeler.
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        // Belirli bir koşula göre kayıtları filtreleme
+        /// Belirtilen koşula uyan entity'leri asenkron olarak bulur.
         public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.Where(predicate).ToListAsync();
         }
 
-        // Yeni kayıt ekleme
+        /// Yeni bir entity'yi asenkron olarak ekler.
         public virtual async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
@@ -49,15 +50,15 @@ namespace new_cms.Infrastructure.Persistence.Repositories
             return entity;
         }
 
-        // Mevcut kaydı güncelleme
+        /// Mevcut bir entity'yi asenkron olarak günceller.
         public virtual async Task<T> UpdateAsync(T entity)
         {
-            _context.Entry(entity).State = EntityState.Modified; //entity'nin durumunu modified yapıyoruz.
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        // Kaydı kalıcı olarak silme
+        /// Belirtilen ID'ye sahip entity'yi veritabanından kalıcı olarak asenkron siler.
         public virtual async Task DeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
@@ -68,115 +69,107 @@ namespace new_cms.Infrastructure.Persistence.Repositories
             }
         }
 
-        // Kaydı silindi olarak işaretleme (soft delete)
+        /// Belirtilen ID'ye sahip entity'yi silindi olarak işaretler (soft delete).
+        /// 'IsDeleted' veya 'Isdeleted' property'sini dinamik olarak bulur ve günceller.
         public virtual async Task SoftDeleteAsync(int id)
         {
             var entity = await GetByIdAsync(id);
             if (entity != null)
             {
-                // IsDeleted özelliğini dinamik olarak kontrol edip ayarlama
-                var property = typeof(T).GetProperty("IsDeleted");
-                if (property != null)
-                {
-                    property.SetValue(entity, true);
-                    await _context.SaveChangesAsync();
-                }
+                SetSoftDeleteProperty(entity, true);
+                await _context.SaveChangesAsync();
             }
         }
 
-        // Sayfalanmış veri getirme
-        //tek bir metotda birden fazla deger dondurmek icin tuple (coklu geri donus) kullanilir. Orn : Task<(IEnumerable<T> Items, int TotalCount)>
-        public virtual async Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
-        {
-            var totalCount = await _dbSet.CountAsync();
-            var items = await _dbSet.Skip((pageNumber - 1) * pageSize)  // 2. Sayfa: sonraki 10 kayıt (11-20) 'lk 10 kaydi geç
-                                  .Take(pageSize)                       // (2-1) * 10 = 10 kayıt atla
-                                  .ToListAsync();                       // 10 kayıt al
-
-            return (items, totalCount);
-        }
-
-        // Filtrelenmiş, sıralanmış ve ilişkili verilerle birlikte kayıtları getirme orn:actıve ve deleted olmayanlar
-        public virtual async Task<IEnumerable<T>> GetFilteredAsync(
-            Expression<Func<T, bool>>? filter = null,                  //filtreleme icin
-            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, //siralama icin
-            string includeProperties = "")                            //iliskili veriler tablolar icin (pages ve components)
-        {
-            IQueryable<T> query = _dbSet; //IQueryable : Veritabanı sprgusu olusturmak ıcın kullanılan ınterface, sorgu veritabanına girmeden once olusturulur ve optimize edilir
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split  //Components,Category
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return await orderBy(query).ToListAsync();
-            }
-
-            return await query.ToListAsync();
-        }
-
-        // Çoklu kayıt ekleme
+        /// Çoklu entity ekleme işlemi yapar.
         public virtual async Task AddRangeAsync(IEnumerable<T> entities)
         {
             await _dbSet.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
 
-        // Çoklu kayıt güncelleme
+        /// Çoklu entity güncelleme işlemi yapar.
         public virtual async Task UpdateRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.UpdateRange(entities);
             await _context.SaveChangesAsync();
         }
 
-        // Çoklu kayıt silme
-        public virtual async Task DeleteRangeAsync(IEnumerable<int> ids)
+        /// Çoklu entity silme işlemi yapar (kalıcı).
+        public virtual async Task DeleteRangeAsync(IEnumerable<T> entities)
         {
-            foreach (var id in ids)
+            _dbSet.RemoveRange(entities);
+            await _context.SaveChangesAsync();
+        }
+
+        /// Çoklu entity silme işlemi yapar (soft delete).
+        public virtual async Task SoftDeleteRangeAsync(IEnumerable<T> entities)
+        {
+            foreach (var entity in entities)
             {
-                var entity = await GetByIdAsync(id);
-                if (entity != null)
-                {
-                    var idProperty = entity.GetType().GetProperty("Id");
-                    if (idProperty != null)
-                    {
-                        var entityId = (int)idProperty.GetValue(entity)!;
-                        if (entityId == id)
-                        {
-                            _dbSet.Remove(entity);
-                        }
-                    }
-                }
+                SetSoftDeleteProperty(entity, true);
             }
             await _context.SaveChangesAsync();
         }
 
-        // ID'ye göre kayıt varlığı kontrolü
+        /// Belirtilen ID'ye sahip verinin var olup olmadığını kontrol eder.
         public virtual async Task<bool> ExistsAsync(int id)
         {
+            // FindAsync null dönerse kayıt yoktur.
             return await _dbSet.FindAsync(id) != null;
         }
 
-        // Belirli bir koşula göre kayıt varlığı kontrolü
+        /// Belirtilen koşula uyan herhangi bir kaydın olup olmadığını kontrol eder.
         public virtual async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.AnyAsync(predicate);
         }
 
-        // Kayıt sayısı hesaplama
+        /// Belirtilen koşula uyan kayıt sayısını döndürür.
         public virtual async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
-            if (predicate == null)
-                return await _dbSet.CountAsync();
-            return await _dbSet.CountAsync(predicate);
+            return predicate == null ? await _dbSet.CountAsync() : await _dbSet.CountAsync(predicate);
+        }
+
+        /// Temel sorgu nesnesini (IQueryable) döndürür.
+        public virtual IQueryable<T> Query()
+        {
+            return _dbSet.AsQueryable();
+        }
+
+        // --- Helper Metodlar ---
+
+        /// Entity üzerinde 'IsDeleted' veya 'Isdeleted' property'sini bulup değerini ayarlar.
+        protected virtual void SetSoftDeleteProperty(T entity, bool value)
+        {
+            var propertyInfo = GetSoftDeletePropertyInfo();
+            if (propertyInfo != null)
+            {
+                // Property tipine göre değeri ayarla (bool veya int olabilir)
+                if (propertyInfo.PropertyType == typeof(bool))
+                {
+                    propertyInfo.SetValue(entity, value);
+                }
+                else if (propertyInfo.PropertyType == typeof(int))
+                {
+                    propertyInfo.SetValue(entity, value ? 1 : 0);
+                }
+                // Diğer tipler için gerekirse genişletilebilir.
+            }
+        }
+
+        /// Cache'lenmiş veya dinamik olarak soft delete property bilgisini alır.
+        private PropertyInfo? _softDeletePropertyInfo; // Basit caching
+        private bool _softDeletePropertyChecked = false;
+
+        protected virtual PropertyInfo? GetSoftDeletePropertyInfo()
+        {
+            if (!_softDeletePropertyChecked)
+            {
+                _softDeletePropertyInfo = typeof(T).GetProperty("IsDeleted", BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                _softDeletePropertyChecked = true;
+            }
+            return _softDeletePropertyInfo;
         }
     }
 } 

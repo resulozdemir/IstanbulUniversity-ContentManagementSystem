@@ -1,67 +1,75 @@
+using new_cms.Application.DTOs.NewsDTOs;
+using new_cms.Application.DTOs.EventDTOs;
+using new_cms.Application.DTOs.NoticeDTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using new_cms.Application.DTOs.ContentDTOs;
 
 namespace new_cms.Application.Interfaces
-{
+{    /// Haber, Etkinlik ve Duyuru içerik türlerinin yönetimini sağlayan arayüz
     public interface IContentService
     {
-        // İçerik sayfalarını listeler
-        Task<IEnumerable<ContentPageListDto>> GetAllContentPagesAsync();
-        
-        // Belirli bir içerik sayfası detayını getirir
-        Task<ContentPageDetailDto?> GetContentPageByIdAsync(int id);
-        
-        // Yeni içerik sayfası oluşturur
-        Task<ContentPageDto> CreateContentPageAsync(ContentPageDto contentPageDto);
-        
-        // Mevcut içerik sayfasını günceller
-        Task<ContentPageDto> UpdateContentPageAsync(ContentPageDto contentPageDto);
-        
-        // İçerik sayfasını soft delete yapar
-        Task DeleteContentPageAsync(int id);
-        
-        // İçerik gruplarını listeler
-        Task<IEnumerable<ContentGroupListDto>> GetAllContentGroupsAsync();
-        
-        // Belirli bir içerik grubu detayını getirir
-        Task<ContentGroupDetailDto?> GetContentGroupByIdAsync(int id);
-        
-        // Yeni içerik grubu oluşturur
-        Task<ContentGroupDto> CreateContentGroupAsync(ContentGroupDto contentGroupDto);
-        
-        // Mevcut içerik grubunu günceller
-        Task<ContentGroupDto> UpdateContentGroupAsync(ContentGroupDto contentGroupDto);
-        
-        // İçerik grubunu soft delete yapar
-        Task DeleteContentGroupAsync(int id);
-        
-        // Sayfalı ve filtrelenmiş içerik sayfası listesi döndürür
-        Task<(IEnumerable<ContentPageListDto> Items, int TotalCount)> GetPagedContentPagesAsync(
-            int pageNumber,
-            int pageSize,
+        /// Sayfalı ve filtrelenmiş haber listesi getirir.
+        Task<(IEnumerable<NewsListDto> Items, int TotalCount)> GetPagedNewsAsync(
+            int pageNumber, 
+            int pageSize, 
+            int? siteId = null, 
             string? searchTerm = null,
             string? sortBy = null,
             bool ascending = true);
             
-        // Sayfalı ve filtrelenmiş içerik grubu listesi döndürür
-        Task<(IEnumerable<ContentGroupListDto> Items, int TotalCount)> GetPagedContentGroupsAsync(
-            int pageNumber,
-            int pageSize,
+        /// Belirtilen ID'ye sahip haberi getirir.
+        /// "id">Haber ID'si.
+        Task<NewsDto?> GetNewsByIdAsync(int id);
+
+        /// Yeni bir haber oluşturur.
+        Task<NewsDto> CreateNewsAsync(NewsDto newsDto);
+
+        /// Mevcut bir haberi günceller.
+        Task<NewsDto> UpdateNewsAsync(NewsDto newsDto);
+
+        /// Belirtilen ID'ye sahip haberi siler (soft delete).
+        Task DeleteNewsAsync(int id);
+
+        /// Sayfalı ve filtrelenmiş etkinlik listesi getirir.
+        Task<(IEnumerable<EventListDto> Items, int TotalCount)> GetPagedEventsAsync(
+            int pageNumber, 
+            int pageSize, 
+            int? siteId = null, 
             string? searchTerm = null,
             string? sortBy = null,
             bool ascending = true);
             
-        // Site ID'ye göre içerik sayfalarını listeler
-        Task<IEnumerable<ContentPageListDto>> GetContentPagesBySiteIdAsync(int siteId);
+        /// Belirtilen ID'ye sahip etkinliği getirir.
+        Task<EventDto?> GetEventByIdAsync(int id);
+
+        /// Yeni bir etkinlik oluşturur.
+        Task<EventDto> CreateEventAsync(EventDto eventDto);
+
+        /// Mevcut bir etkinliği günceller.
+        Task<EventDto> UpdateEventAsync(EventDto eventDto);
+
+        /// Belirtilen ID'ye sahip etkinliği siler (soft delete).
+        Task DeleteEventAsync(int id);
+
+        /// Sayfalı ve filtrelenmiş duyuru listesi getirir.
+        Task<(IEnumerable<NoticeListDto> Items, int TotalCount)> GetPagedNoticesAsync(
+            int pageNumber, 
+            int pageSize, 
+            int? siteId = null, 
+            string? searchTerm = null,
+            string? sortBy = null,
+            bool ascending = true);
+
+        /// Belirtilen ID'ye sahip duyuruyu getirir.
+        Task<NoticeDto?> GetNoticeByIdAsync(int id);
+
+        /// Yeni bir duyuru oluşturur.
+        Task<NoticeDto> CreateNoticeAsync(NoticeDto noticeDto);
+
+        /// Mevcut bir duyuruyu günceller.
+        Task<NoticeDto> UpdateNoticeAsync(NoticeDto noticeDto);
         
-        // Grup ID'ye göre içerik sayfalarını listeler
-        Task<IEnumerable<ContentPageListDto>> GetContentPagesByGroupIdAsync(int groupId);
-        
-        // Yayında olan içerik sayfalarını listeler
-        Task<IEnumerable<ContentPageListDto>> GetActiveContentPagesAsync();
-        
-        // Kategorisiz içerik sayfalarını listeler
-        Task<IEnumerable<ContentPageListDto>> GetUncategorizedContentPagesAsync();
+        /// Belirtilen ID'ye sahip duyuruyu siler (soft delete).
+        Task DeleteNoticeAsync(int id);
     }
 } 

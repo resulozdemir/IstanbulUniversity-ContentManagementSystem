@@ -24,21 +24,13 @@ Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAutoMapp
 builder.Services.AddDbContext<UCmsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Services
-builder.Services.AddScoped<ISiteRepository, SiteRepository>();
-builder.Services.AddScoped<ISiteDomainRepository, SiteDomainRepository>();
-builder.Services.AddScoped<IThemeRepository, ThemeRepository>();
-builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
-builder.Services.AddScoped<ISitePageRepository, SitePageRepository>();
-builder.Services.AddScoped<INewsRepository, NewsRepository>();
-builder.Services.AddScoped<IContentGroupRepository, ContentGroupRepository>();
-builder.Services.AddScoped<IMenuRepository, MenuRepository>();
-builder.Services.AddScoped<IEventRepository, EventRepository>();
-
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<ISiteDomainService, SiteDomainService>();
 builder.Services.AddScoped<IThemeService, ThemeService>();
 builder.Services.AddScoped<IComponentService, ComponentService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<IPageService, PageService>();
 
 var app = builder.Build();
 

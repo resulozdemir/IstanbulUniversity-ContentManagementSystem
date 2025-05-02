@@ -9,9 +9,6 @@ namespace new_cms.Application.Interfaces
         // Belirli bir site için tüm domain'leri listeler
         Task<IEnumerable<SiteDomainDto>> GetDomainsBySiteIdAsync(int siteId);
         
-        // Domain ID'ye göre detay getirir
-        Task<SiteDomainDto?> GetDomainByIdAsync(int id);
-        
         // Yeni domain ekler
         Task<SiteDomainDto> CreateDomainAsync(SiteDomainDto domainDto);
         

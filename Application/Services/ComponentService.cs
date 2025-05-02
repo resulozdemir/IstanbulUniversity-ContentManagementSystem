@@ -1,261 +1,234 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using new_cms.Application.DTOs.ComponentDTOs;
+using new_cms.Application.DTOs.ThemeDTOs;
+using new_cms.Application.Interfaces;
+using new_cms.Domain.Entities;
+using new_cms.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using new_cms.Application.DTOs.ComponentDTOs;
-using new_cms.Application.Interfaces;
-using new_cms.Domain.Entities;
-using new_cms.Domain.Interfaces;
 
 namespace new_cms.Application.Services
 {
+    /// Bileşen yönetimi ile ilgili işlemleri gerçekleştiren servis sınıfı.
     public class ComponentService : IComponentService
     {
-        private readonly IComponentRepository _componentRepository;
+        private readonly IRepository<TAppThemecomponent> _themeComponentRepository;
+        private readonly IRepository<TAppSitecomponentdata> _siteComponentDataRepository;
         private readonly IMapper _mapper;
 
-        public ComponentService(IComponentRepository componentRepository, IMapper mapper)
+        public ComponentService(
+            IRepository<TAppComponent> componentRepository,
+            IRepository<TAppThemecomponent> themeComponentRepository,
+            IRepository<TAppSitecomponentdata> siteComponentDataRepository,
+            IMapper mapper)
         {
-            _componentRepository = componentRepository ?? throw new ArgumentNullException(nameof(componentRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _themeComponentRepository = themeComponentRepository;
+            _siteComponentDataRepository = siteComponentDataRepository;
+            _mapper = mapper;
         }
 
-        // Tüm bileşenleri listele
-        public async Task<IEnumerable<ComponentDto>> GetAllComponentsAsync()
-        {
-            // Tüm bileşenleri getir
-            var components = await _componentRepository.GetAllComponentsAsync();
-            
-            // DTO'ya dönüştür
-            return _mapper.Map<IEnumerable<ComponentDto>>(components);
-        }
-
-        // Bileşen detayını getir
-        public async Task<ComponentDto?> GetComponentByIdAsync(int id)
-        {
-            // Bileşen bilgisini getir
-            var component = await _componentRepository.GetComponentByIdAsync(id);
-            if (component == null)
-                return null;
-                
-            // DTO'ya dönüştür
-            return _mapper.Map<ComponentDto>(component);
-        }
-
-        // Yeni bileşen oluştur
-        public async Task<ComponentDto> CreateComponentAsync(ComponentDto componentDto)
-        {
-            // DTO'yu entity'e dönüştür
-            var component = _mapper.Map<TAppComponent>(componentDto);
-            
-            // Repository üzerinden kaydet
-            var createdComponent = await _componentRepository.AddAsync(component);
-            
-            // Kaydedilen entity'yi DTO'ya dönüştür ve geri döndür
-            return _mapper.Map<ComponentDto>(createdComponent);
-        }
-
-        // Bileşen bilgilerini güncelle
-        public async Task<ComponentDto> UpdateComponentAsync(ComponentDto componentDto)
-        {
-            // Güncellenecek bileşen ID kontrol et
-            if (!componentDto.Id.HasValue)
-                throw new ArgumentException("Component ID is required for update operation");
-            
-            // Mevcut bileşen verilerini getir
-            var existingComponent = await _componentRepository.GetByIdAsync(componentDto.Id.Value);
-            if (existingComponent == null)
-                throw new KeyNotFoundException($"Component with ID {componentDto.Id.Value} not found");
-            
-            // DTO'dan entity'ye dönüştür
-            var component = _mapper.Map<ComponentDto, TAppComponent>(componentDto, existingComponent);
-            
-            // Repository üzerinden güncelle
-            var updatedComponent = await _componentRepository.UpdateAsync(component);
-            
-            // Güncellenen entity'yi DTO'ya dönüştür ve geri döndür
-            return _mapper.Map<ComponentDto>(updatedComponent);
-        }
-
-        // Bileşen sil (soft delete)
-        public async Task DeleteComponentAsync(int id)
-        {
-            // Bileşenin kullanımda olup olmadığını kontrol et
-            if (await IsComponentInUseAsync(id))
-                throw new InvalidOperationException($"Component with ID {id} is in use and cannot be deleted");
-                
-            // Soft delete kullanarak bileşeni sil
-            await _componentRepository.SoftDeleteAsync(id);
-        }
-
-        // Belirli türdeki bileşenleri listele
-        public async Task<IEnumerable<ComponentDto>> GetComponentsByTypeAsync(string type)
-        {
-            // Belirtilen türdeki bileşenleri getir
-            var components = await _componentRepository.GetComponentsByTypeAsync(type);
-            
-            // DTO'ya dönüştür
-            return _mapper.Map<IEnumerable<ComponentDto>>(components);
-        }
-
-        // Bileşenin kullanımda olup olmadığını kontrol et
-        public async Task<bool> IsComponentInUseAsync(int id)
-        {
-            return await _componentRepository.IsComponentInUseAsync(id);
-        }
-
-        // Siteye ait bileşen verilerini listele
-        public async Task<IEnumerable<SiteComponentDataDto>> GetComponentDataBySiteIdAsync(int siteId)
-        {
-            // Site bileşen verilerini getir
-            var componentData = await _componentRepository.GetComponentDataBySiteIdAsync(siteId);
-            
-            // DTO'ya dönüştür
-            var dataDtos = _mapper.Map<IEnumerable<SiteComponentDataDto>>(componentData);
-            
-            // Bileşen adlarını doldur
-            foreach (var data in dataDtos)
-            {
-                if (data.ComponentId > 0)
-                {
-                    var component = await _componentRepository.GetComponentByIdAsync(data.ComponentId.GetValueOrDefault());
-                    if (component != null)
-                    {
-                        data.ComponentName = component.Name;
-                    }
-                }
-            }
-            
-            return dataDtos;
-        }
-
-        // Bileşen verisi detayını getir
-        public async Task<SiteComponentDataDto?> GetComponentDataByIdAsync(int dataId)
-        {
-            // Bileşen veri detayını getir
-            var data = await _componentRepository.GetComponentDataByIdAsync(dataId);
-            if (data == null)
-                return null;
-                
-            // DTO'ya dönüştür
-            var dataDto = _mapper.Map<SiteComponentDataDto>(data);
-            
-            // Bileşen adını doldur
-            if (dataDto.ComponentId > 0) // Nullable kontrolü yerine değer kontrolü yapıyoruz
-            {
-                var component = await _componentRepository.GetComponentByIdAsync(dataDto.ComponentId.Value);
-                if (component != null)
-                {
-                    dataDto.ComponentName = component.Name;
-                }
-            }
-            
-            return dataDto;
-        }
-
-        // Siteye bileşen verisi ekle
-        public async Task<SiteComponentDataDto> AddComponentDataToSiteAsync(SiteComponentDataDto dataDto)
+        /// Belirtilen tema-bileşen ilişkisini pasif hale getirir (soft delete).
+        public async Task RemoveComponentFromThemeAsync(int themeComponentId)
         {
             try
             {
-                // DTO'yu entity'e dönüştür
-                var data = _mapper.Map<TAppSitecomponentdata>(dataDto);
-                
-                // İlişkileri doğru şekilde ayarla
-                data.Siteid = dataDto.SiteId;
-                data.Themecomponentid = dataDto.ThemeComponentId;
-                data.Createddate = DateTime.Now;
-                
-                
-                var result = _mapper.Map<SiteComponentDataDto>(dataDto);
-                
-                // Bileşen adını doldur
-                if (result.ComponentId.GetValueOrDefault() > 0)
-                {
-                    var component = await _componentRepository.GetComponentByIdAsync(result.ComponentId.GetValueOrDefault());
-                    if (component != null)
-                    {
-                        result.ComponentName = component.Name;
-                    }
-                }
-                
-                return result;
+                await _themeComponentRepository.SoftDeleteAsync(themeComponentId);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Site bileşen verisi eklenirken hata: {ex.Message}", ex);
+                throw new InvalidOperationException($"Tema-Bileşen ilişkisi kaldırılırken bir hata oluştu (ID: {themeComponentId}).", ex);
             }
         }
 
-        // Bileşen verisini güncelle
-        public async Task<SiteComponentDataDto> UpdateComponentDataAsync(SiteComponentDataDto dataDto)
+        /// Belirtilen ID'ye sahip aktif site bileşen verisini getirir.
+        public async Task<SiteComponentDataDto?> GetComponentDataAsync(int siteComponentDataId)
         {
             try
             {
-                // Güncellenecek veri ID kontrol et
-                if (!dataDto.Id.HasValue)
-                    throw new ArgumentException("Component data ID is required for update operation");
+                var data = await _siteComponentDataRepository.Query()
+                    .Include(scd => scd.Themecomponent) 
+                    .FirstOrDefaultAsync(scd => scd.Id == siteComponentDataId && scd.Isdeleted == 0);
+
+                if (data == null) return null;
                 
-                // Mevcut bileşen veri detayını getir
-                var existingData = await _componentRepository.GetComponentDataByIdAsync(dataDto.Id.Value);
-                if (existingData == null)
-                    throw new KeyNotFoundException($"Component data with ID {dataDto.Id.Value} not found");
-                
-                // DTO'dan entity'ye dönüştür
-                var data = _mapper.Map<SiteComponentDataDto, TAppSitecomponentdata>(dataDto, existingData);
-                
-                // İlişkileri ve zaman bilgilerini güncelle
-                data.Siteid = dataDto.SiteId;
-                data.Themecomponentid = dataDto.ThemeComponentId;
-                data.Modifieddate = DateTime.Now;
-                
-                // Mevcut durumda uygun repository metodu olmadığından en basit durumu gerçekleştirelim
-                // İdeal olarak aşağıdaki ComponentRepository içine eklenmesi gereken metot:
-                // public async Task<TAppSitecomponentdata> UpdateComponentDataAsync(TAppSitecomponentdata data)
-                
-                // Geçici olarak DTO'yu geri döndürüyoruz
-                // NOT: Bu kısım ilgili repository metodu eklendikten sonra değiştirilmelidir
-                var result = _mapper.Map<SiteComponentDataDto>(dataDto);
-                
-                // Bileşen adını doldur
-                if (result.ComponentId.GetValueOrDefault() > 0)
-                {
-                    var component = await _componentRepository.GetComponentByIdAsync(result.ComponentId.GetValueOrDefault());
-                    if (component != null)
-                    {
-                        result.ComponentName = component.Name;
-                    }
-                }
-                
-                return result;
+                var dto = _mapper.Map<SiteComponentDataDto>(data);
+
+                 if (data.Themecomponent != null)
+                 {
+                    dto.ComponentName = data.Themecomponent.Name; 
+                 }
+
+                return dto;
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Site bileşen verisi güncellenirken hata: {ex.Message}", ex);
+                throw new InvalidOperationException($"Site bileşen verisi getirilirken bir hata oluştu (ID: {siteComponentDataId}).", ex);
             }
         }
 
-        // Bileşen verisini sil
-        public async Task DeleteComponentDataAsync(int dataId)
+        /// Mevcut bir site bileşen verisini günceller.
+        /// Sadece 'Data' alanı ve güncelleme bilgileri değiştirilir.
+        public async Task<SiteComponentDataDto> UpdateComponentDataAsync(SiteComponentDataDto componentDataDto)
         {
+             if (componentDataDto?.Id == null || componentDataDto.Id <= 0)
+                throw new ArgumentNullException(nameof(componentDataDto), "Güncelleme için geçerli bir site bileşen veri ID'si gereklidir.");
+            
             try
             {
-                // Silmeden önce veriyi kontrol et
-                var data = await _componentRepository.GetComponentDataByIdAsync(dataId);
-                if (data == null)
-                    throw new KeyNotFoundException($"Component data with ID {dataId} not found");
+                 var existingData = await _siteComponentDataRepository.Query()
+                                           .Include(scd => scd.Themecomponent)
+                                           .FirstOrDefaultAsync(scd => scd.Id == componentDataDto.Id.Value);
+                                           
+                if (existingData == null || existingData.Isdeleted == 1)
+                    throw new KeyNotFoundException($"Güncellenecek site bileşen verisi bulunamadı veya silinmiş: ID {componentDataDto.Id.Value}");
                 
-                // Mevcut durumda doğrudan DeleteAsync'i kullanıyoruz ancak
-                // TAppSitecomponentdata için özel bir metod gerekebilir
-                // Asıl Repository interface'inde şöyle bir metod olmalı:
-                // Task DeleteComponentDataAsync(int dataId);
+                existingData.Data = componentDataDto.Data; 
+                existingData.Modifieddate = DateTime.UtcNow;
+                // existingData.Modifieduser = GetCurrentUserId(); 
+
+                await _siteComponentDataRepository.UpdateAsync(existingData);
                 
-                await _componentRepository.DeleteAsync(dataId);
+                 var updatedDto = _mapper.Map<SiteComponentDataDto>(existingData);
+                 
+                if (existingData.Themecomponent != null)
+                {
+                    updatedDto.ComponentName = existingData.Themecomponent.Name;
+                }
+
+                return updatedDto;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException($"Site bileşen verisi güncellenirken veritabanı hatası oluştu (ID: {componentDataDto.Id.Value}).", ex);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Site bileşen verisi silinirken hata: {ex.Message}", ex);
+                 if (ex is KeyNotFoundException) throw;
+                throw new InvalidOperationException($"Site bileşen verisi güncellenirken beklenmedik bir hata oluştu (ID: {componentDataDto.Id.Value}).", ex);
+            }
+        }
+
+        /// Belirli bir site için kullanılması gereken tüm aktif bileşenleri ve verilerini getirir.
+        public async Task<IEnumerable<SiteComponentDataDto>> GetComponentsForSiteAsync(int siteId)
+        {
+            try
+            {
+                var siteComponentData = await _siteComponentDataRepository.Query()
+                    .Where(scd => scd.Siteid == siteId && scd.Isdeleted == 0)
+                    .Include(scd => scd.Themecomponent) 
+                    .ToListAsync();
+                
+                 var dtos = _mapper.Map<List<SiteComponentDataDto>>(siteComponentData);
+
+                foreach (var dto in dtos)
+                {
+                    var correspondingEntity = siteComponentData.FirstOrDefault(scd => scd.Id == dto.Id);
+                    if (correspondingEntity?.Themecomponent != null)
+                    {
+                        dto.ComponentName = correspondingEntity.Themecomponent.Name; 
+                    }
+                }
+
+                return dtos;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Site için bileşenler getirilirken bir hata oluştu (Site ID: {siteId}).", ex);
+            }
+        }
+
+        /// Bir bileşeni belirli bir temaya atar (yeni kayıt oluşturur).
+        public async Task<ThemeComponentDto> AddComponentToThemeAsync(ThemeComponentDto themeComponentDto)
+        {
+            if (themeComponentDto == null)
+                throw new ArgumentNullException(nameof(themeComponentDto));
+            if (themeComponentDto.ThemeId <= 0)
+                throw new ArgumentException("Geçerli bir Tema ID'si gereklidir.", nameof(themeComponentDto.ThemeId));
+            if (themeComponentDto.ComponentId <= 0)
+                throw new ArgumentException("Geçerli bir Bileşen ID'si gereklidir.", nameof(themeComponentDto.ComponentId));
+
+            try
+            {
+                // Aynı tema ve bileşen için zaten aktif bir kayıt var mı kontrolü
+                bool exists = await _themeComponentRepository.AnyAsync(tc => tc.Themeid == themeComponentDto.ThemeId 
+                                                                        && tc.Componentid == themeComponentDto.ComponentId 
+                                                                        && tc.Isdeleted == 0);
+                if (exists)
+                {
+                    throw new InvalidOperationException("Bu bileşen zaten bu temaya atanmış.");
+                }
+
+                var themeComponentEntity = _mapper.Map<TAppThemecomponent>(themeComponentDto);
+                themeComponentEntity.Isdeleted = 0;
+                themeComponentEntity.Createddate = DateTime.UtcNow;
+                // themeComponentEntity.Createduser = GetCurrentUserId(); 
+
+                await _themeComponentRepository.AddAsync(themeComponentEntity);
+
+                var resultDto = _mapper.Map<ThemeComponentDto>(themeComponentEntity);
+                resultDto.ComponentName = themeComponentEntity.Name;
+                
+                return resultDto;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException("Tema-Bileşen ilişkisi eklenirken veritabanı hatası oluştu.", ex);
+            }
+            catch (Exception ex)
+            {
+                if (ex is InvalidOperationException) throw;
+                throw new InvalidOperationException("Tema-Bileşen ilişkisi eklenirken beklenmedik bir hata oluştu.", ex);
+            }
+        }
+
+        /// Mevcut bir tema-bileşen ilişkisini günceller.
+        public async Task<ThemeComponentDto> UpdateThemeComponentAsync(ThemeComponentDto themeComponentDto)
+        {
+            if (themeComponentDto == null)
+                throw new ArgumentNullException(nameof(themeComponentDto));
+            if (themeComponentDto.Id <= 0)
+                throw new ArgumentException("Güncelleme için geçerli bir ID gereklidir.", nameof(themeComponentDto.Id));
+            if (themeComponentDto.ThemeId <= 0)
+                throw new ArgumentException("Geçerli bir Tema ID'si gereklidir.", nameof(themeComponentDto.ThemeId));
+            if (themeComponentDto.ComponentId <= 0)
+                throw new ArgumentException("Geçerli bir Bileşen ID'si gereklidir.", nameof(themeComponentDto.ComponentId));
+
+            try
+            {
+                var themeComponentEntity = await _themeComponentRepository.GetByIdAsync(themeComponentDto.Id.Value);
+                if (themeComponentEntity == null || themeComponentEntity.Isdeleted == 1)
+                    throw new KeyNotFoundException($"Güncellenecek tema-bileşen ilişkisi bulunamadı: ID {themeComponentDto.Id}");
+                
+                var originalIsDeleted = themeComponentEntity.Isdeleted;
+                var originalCreatedDate = themeComponentEntity.Createddate;
+                var originalCreatedUser = themeComponentEntity.Createduser;
+
+                _mapper.Map(themeComponentDto, themeComponentEntity);
+
+                themeComponentEntity.Isdeleted = originalIsDeleted;
+                themeComponentEntity.Createddate = originalCreatedDate;
+                themeComponentEntity.Createduser = originalCreatedUser;
+                themeComponentEntity.Modifieddate = DateTime.UtcNow;
+                // themeComponentEntity.Modifieduser = GetCurrentUserId();
+
+                await _themeComponentRepository.UpdateAsync(themeComponentEntity);
+
+                var resultDto = _mapper.Map<ThemeComponentDto>(themeComponentEntity);
+                resultDto.ComponentName = themeComponentEntity.Name;
+                
+                return resultDto;
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException($"Tema-Bileşen ilişkisi güncellenirken veritabanı hatası oluştu (ID: {themeComponentDto.Id}).", ex);
+            }
+            catch (Exception ex)
+            {
+                if (ex is KeyNotFoundException || ex is InvalidOperationException) throw;
+                throw new InvalidOperationException($"Tema-Bileşen ilişkisi güncellenirken beklenmedik bir hata oluştu (ID: {themeComponentDto.Id}).", ex);
             }
         }
     }

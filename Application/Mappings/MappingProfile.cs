@@ -1,10 +1,10 @@
 using AutoMapper;
 using new_cms.Domain.Entities;
 using new_cms.Application.DTOs.SiteDTOs;
-using new_cms.Application.DTOs.ContentDTOs;
 using new_cms.Application.DTOs.EventDTOs;
 using new_cms.Application.DTOs.MenuDTOs;
 using new_cms.Application.DTOs.NewsDTOs;
+using new_cms.Application.DTOs.NoticeDTOs;
 using new_cms.Application.DTOs.ThemeDTOs;
 using new_cms.Application.DTOs.ComponentDTOs;
 using new_cms.Application.DTOs.PageDTOs;
@@ -19,12 +19,12 @@ namespace new_cms.Application.Mappings
             CreateMap<TAppSite, SiteDto>().ReverseMap();
                 
             CreateMap<TAppSite, SiteListDto>()
-                .ForMember(dest => dest.ThemeName, opt => opt.Ignore()) // Bu değer servis katmanında doldurulacak
+                .ForMember(dest => dest.ThemeName, opt => opt.Ignore()) 
                 .ReverseMap();
                 
             CreateMap<TAppSite, SiteDetailDto>()
                 .ForMember(dest => dest.ThemeName, opt => opt.Ignore())
-                .ForMember(dest => dest.Domains, opt => opt.Ignore()) // Bu değer servis katmanında doldurulacak
+                .ForMember(dest => dest.Domains, opt => opt.Ignore()) 
                 .ReverseMap();
                 
             CreateMap<TAppSitedomain, SiteDomainDto>().ReverseMap();
@@ -33,29 +33,15 @@ namespace new_cms.Application.Mappings
             CreateMap<TAppTheme, ThemeDto>().ReverseMap();
             
             CreateMap<TAppThemecomponent, ThemeComponentDto>()
-                .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) // Bu değer servis katmanında doldurulacak
+                .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) 
                 .ReverseMap();
             
             // Component Mappings
             CreateMap<TAppComponent, ComponentDto>().ReverseMap();
             
             CreateMap<TAppSitecomponentdata, SiteComponentDataDto>()
-                .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) // Bu değer servis katmanında doldurulacak
+                .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) 
                 .ReverseMap();
-                
-            // Site Page Mappings
-            CreateMap<TAppSitepage, SitePageDto>().ReverseMap();
-            
-            // Content Mappings
-            CreateMap<TAppContentpage, ContentPageDto>()
-                .ForMember(dest => dest.Tags, opt => opt.Ignore()) 
-                .ReverseMap()
-                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
-                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
-                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
-                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore());
-                
-            CreateMap<TAppContentgroup, ContentGroupDto>().ReverseMap();
             
             // News Mappings
             CreateMap<TAppNews, NewsDto>()
@@ -84,15 +70,6 @@ namespace new_cms.Application.Mappings
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Img))
                 .ForMember(dest => dest.PublishDate, opt => opt.MapFrom(src => src.Ondate))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Ispublish == 1))
-                .ReverseMap();
-                
-            CreateMap<TAppNews, NewsDetailDto>()
-                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Header))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Img))
-                .ForMember(dest => dest.PublishDate, opt => opt.MapFrom(src => src.Ondate))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Ispublish == 1))
-                .ForMember(dest => dest.SeoUrl, opt => opt.MapFrom(src => src.Link))
-                .ForMember(dest => dest.Tags, opt => opt.Ignore()) 
                 .ReverseMap();
             
             // Event Mappings
@@ -127,16 +104,20 @@ namespace new_cms.Application.Mappings
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Ispublish == 1))
                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Address))
                 .ReverseMap();
-                
-            CreateMap<TAppEvent, EventDetailDto>()
+            
+            // Notice Mappings
+            CreateMap<TAppNotice, NoticeDto>().ReverseMap()
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
+
+            CreateMap<TAppNotice, NoticeListDto>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Header))
+                .ForMember(dest => dest.PublishDate, opt => opt.MapFrom(src => src.Ondate))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Img))
-                .ForMember(dest => dest.EventDate, opt => opt.MapFrom(src => src.Ondate))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Ispublish == 1))
-                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Address))
-                .ForMember(dest => dest.SeoUrl, opt => opt.MapFrom(src => src.Link))
-                .ForMember(dest => dest.Tags, opt => opt.Ignore()) 
-                .ReverseMap();
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Ispublish == 1));
             
             // Menu Mappings
             CreateMap<TAppMenu, MenuDto>()
@@ -155,11 +136,17 @@ namespace new_cms.Application.Mappings
                 
             CreateMap<TAppMenu, MenuListDto>()
                 .ForMember(dest => dest.ParentName, opt => opt.Ignore())
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Status == 1)) // Status 1 ise aktif
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Status == 1)) 
                 .ReverseMap();
                 
-            CreateMap<TAppMenu, MenuDetailDto>()
-                .ReverseMap();
+            CreateMap<TAppMenu, MenuTreeDto>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Link))
+                .ForMember(dest => dest.SortOrder, opt => opt.MapFrom(src => src.Menuorder))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Status == 1))
+                .ForMember(dest => dest.Icon, opt => opt.MapFrom(src => src.Icon))
+                .ForMember(dest => dest.Target, opt => opt.MapFrom(src => src.Target))
+                .ForMember(dest => dest.Children, opt => opt.Ignore());
         }
     }
 } 

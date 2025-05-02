@@ -28,17 +28,21 @@ namespace new_cms.Application.Interfaces
         Task<SiteDetailDto?> GetSiteByDomainAsync(string domain);
         
         // Aktif (yayında) olan siteleri listeler
-        Task<IEnumerable<SiteListDto>> GetActiveSitesAsync();
+        Task<IEnumerable<SiteListDto>> GetPublishedSitesAsync();
         
         // Sayfalı ve filtrelenmiş site listesi döndürür
         Task<(IEnumerable<SiteListDto> Items, int TotalCount)> GetPagedSitesAsync(
             int pageNumber,
-            int pageSize,
-            string? searchTerm = null,
-            string? sortBy = null,
-            bool ascending = true);
+            int pageSize);
             
-        // Alan adının benzersiz olup olmadığını kontrol eder
-        Task<bool> IsDomainUniqueAsync(string domain, int? excludeSiteId = null);
+
+        /// Belirli bir şablonu (template) kullanan aktif siteleri listeler.
+        Task<IEnumerable<SiteListDto>> GetSitesByTemplateAsync(int templateId);
+
+        /// Belirtilen ID'ye sahip siteyi yayına alır.
+        Task PublishSiteAsync(int siteId);
+
+        /// Belirtilen ID'ye sahip siteyi yayından kaldırır.
+        Task UnpublishSiteAsync(int siteId);
     }
 } 

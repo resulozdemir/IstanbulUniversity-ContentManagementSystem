@@ -20,7 +20,7 @@ namespace new_cms.Application.DTOs.SiteDTOs
 
         [Required]
         [MaxLength(100)]
-        public required string Key { get; set; }  // Anahtar
+        public string? Key { get; set; }  // Anahtar
 
         [MaxLength(200)]
         public string? AnalyticId { get; set; }  // Analytics ID
