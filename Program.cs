@@ -29,7 +29,9 @@ builder.Services.AddScoped<ISiteDomainService, SiteDomainService>();
 builder.Services.AddScoped<IThemeService, ThemeService>();
 builder.Services.AddScoped<IComponentService, ComponentService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
-builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<INewsService, NewsService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<INoticeService, NoticeService>();
 builder.Services.AddScoped<IPageService, PageService>();
 
 var app = builder.Build();

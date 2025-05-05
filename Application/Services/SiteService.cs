@@ -223,7 +223,7 @@ namespace new_cms.Application.Services
                 .Take(pageSize)
                 .ToListAsync();
 
-             var siteDtos = _mapper.Map<IEnumerable<SiteListDto>>(items);
+            var siteDtos = _mapper.Map<IEnumerable<SiteListDto>>(items);
 
             return (siteDtos, totalCount);
         }
