@@ -44,7 +44,7 @@ namespace new_cms.Application.DTOs.SiteDTOs
         // Bağlantılı veriler
         public List<SiteDomainDto> Domains { get; set; } = new List<SiteDomainDto>();
         
-        public List<SitePageDto> Pages { get; set; } = new List<SitePageDto>();
+        public List<PageDto> Pages { get; set; } = new List<PageDto>();
         
         public List<SiteComponentDataDto> Components { get; set; } = new List<SiteComponentDataDto>();
         

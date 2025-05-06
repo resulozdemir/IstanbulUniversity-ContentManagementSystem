@@ -33,6 +33,7 @@ builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<INoticeService, NoticeService>();
 builder.Services.AddScoped<IPageService, PageService>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
 var app = builder.Build();
 
