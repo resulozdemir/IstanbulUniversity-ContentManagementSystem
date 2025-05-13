@@ -11,70 +11,69 @@ using System.Threading.Tasks;
 
 namespace new_cms.Application.Services
 {
-    /// Etkinlik (Event) işlemleri için servis implementasyonu.
+    /// Etkinlik (TAppEvent) varlıkları ile ilgili işlemleri gerçekleştiren servis sınıfı.
     public class EventService : IEventService
     {
-        private readonly IRepository<TAppEvent> _eventRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public EventService(
-            IRepository<TAppEvent> eventRepository,
+            IUnitOfWork unitOfWork, 
             IMapper mapper)
         {
-            _eventRepository = eventRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
-        /// <inheritdoc />
         public async Task<(IEnumerable<EventListDto> Items, int TotalCount)> GetPagedEventsAsync(
             int pageNumber, int pageSize, int? siteId = null, string? searchTerm = null, string? sortBy = null, bool ascending = true)
         {
-             try
-            {
-                var query = _eventRepository.Query().Where(e => e.Isdeleted == 0);
+            // Sayfa ve boyut değerlerinin geçerliliğini kontrol et
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10; // Varsayılan boyut
 
-                // Site ID'sine göre filtrele
-                if (siteId.HasValue)
+            try
+            {
+                var query = _unitOfWork.Repository<TAppEvent>().Query().Where(e => e.Isdeleted == 0); 
+
+                if (siteId.HasValue && siteId.Value > 0) 
                 {
                     query = query.Where(e => e.Siteid == siteId.Value);
                 }
 
-                // Arama terimine göre filtrele (Başlık, İçerik, Özet, Adres, Etiket)
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                    query = query.Where(e => e.Header.Contains(searchTerm) || 
-                                             (e.Content != null && e.Content.Contains(searchTerm)) ||
-                                             (e.Summary != null && e.Summary.Contains(searchTerm)) ||
-                                             (e.Address != null && e.Address.Contains(searchTerm)) ||
-                                             (e.Tag != null && e.Tag.Contains(searchTerm)));
+                    query = query.Where(e => 
+                        (e.Header != null && e.Header.Contains(searchTerm)) || 
+                        (e.Content != null && e.Content.Contains(searchTerm)) ||
+                        (e.Summary != null && e.Summary.Contains(searchTerm)) ||
+                        (e.Address != null && e.Address.Contains(searchTerm)) ||
+                        (e.Tag != null && e.Tag.Contains(searchTerm))
+                    );
                 }
                 
-                // Dinamik sıralama
                 if (!string.IsNullOrWhiteSpace(sortBy))
                 {
-                    query = sortBy.ToLower() switch
+                    query = sortBy.ToLowerInvariant() switch 
                     {
                         "id" => ascending ? query.OrderBy(e => e.Id) : query.OrderByDescending(e => e.Id),
                         "header" => ascending ? query.OrderBy(e => e.Header) : query.OrderByDescending(e => e.Header),
                         "date" => ascending ? query.OrderBy(e => e.Ondate) : query.OrderByDescending(e => e.Ondate),
-                        "created" => ascending ? query.OrderBy(e => e.Createddate) : query.OrderByDescending(e => e.Createddate),
-                        "modified" => ascending ? query.OrderBy(e => e.Modifieddate) : query.OrderByDescending(e => e.Modifieddate),
-                        "publish" => ascending ? query.OrderBy(e => e.Ispublish) : query.OrderByDescending(e => e.Ispublish),
-                        "priority" => ascending ? query.OrderBy(e => e.Priorityorder) : query.OrderByDescending(e => e.Priorityorder),
+                        "createddate" => ascending ? query.OrderBy(e => e.Createddate) : query.OrderByDescending(e => e.Createddate), 
+                        "modifieddate" => ascending ? query.OrderBy(e => e.Modifieddate) : query.OrderByDescending(e => e.Modifieddate), 
+                        "ispublish" => ascending ? query.OrderBy(e => e.Ispublish) : query.OrderByDescending(e => e.Ispublish), 
+                        "priorityorder" => ascending ? query.OrderBy(e => e.Priorityorder) : query.OrderByDescending(e => e.Priorityorder), 
                         "address" => ascending ? query.OrderBy(e => e.Address) : query.OrderByDescending(e => e.Address),
-                        _ => ascending ? query.OrderBy(e => e.Ondate) : query.OrderByDescending(e => e.Ondate) // Varsayılan tarih sıralaması
+                        _ => ascending ? query.OrderBy(n => n.Ondate) : query.OrderByDescending(n => n.Ondate) 
                     };
                 }
                 else
                 {
-                    // Varsayılan sıralama (sortBy belirtilmemişse)
                     query = ascending ? query.OrderBy(e => e.Ondate) : query.OrderByDescending(e => e.Ondate);
                 }
                 
-                // Toplam öğe sayısını al
                 var totalCount = await query.CountAsync();
 
-                // Sayfalama uygula
                 var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
                 return (_mapper.Map<IEnumerable<EventListDto>>(items), totalCount);
@@ -85,13 +84,16 @@ namespace new_cms.Application.Services
             }
         }
 
-        /// <inheritdoc />
         public async Task<EventDto?> GetEventByIdAsync(int id)
         {
+            if (id <= 0) {
+                 throw new ArgumentException("Geçerli bir etkinlik ID'si gereklidir.", nameof(id));
+            }
+
              try
             {
-                // Belirtilen ID'ye sahip ve silinmemiş etkinliği bul
-                var eventItem = await _eventRepository.Query().FirstOrDefaultAsync(e => e.Id == id && e.Isdeleted == 0);
+                var eventItem = await _unitOfWork.Repository<TAppEvent>().Query()
+                                    .FirstOrDefaultAsync(e => e.Id == id && e.Isdeleted == 0); 
                 
                 return eventItem == null ? null : _mapper.Map<EventDto>(eventItem);
             }
@@ -101,70 +103,99 @@ namespace new_cms.Application.Services
             }
         }
 
-        /// <inheritdoc />
         public async Task<EventDto> CreateEventAsync(EventDto eventDto)
         {
+            if (eventDto == null) {
+                 throw new ArgumentNullException(nameof(eventDto), "Oluşturulacak etkinlik bilgileri boş olamaz.");
+            }
+            if (string.IsNullOrWhiteSpace(eventDto.Header)) {
+                 throw new ArgumentException("Etkinlik başlığı boş olamaz.", nameof(eventDto.Header));
+            }
+             if (eventDto.SiteId <= 0) { 
+                 throw new ArgumentException("Geçerli bir Site ID'si gereklidir.", nameof(eventDto.SiteId));
+             }
+
             try
             {
                 var eventItem = _mapper.Map<TAppEvent>(eventDto);
-                eventItem.Isdeleted = 0;
-                eventItem.Createddate = DateTime.UtcNow;
-                // eventItem.Createduser = GetCurrentUserId();
+                eventItem.Isdeleted = 0; 
+                eventItem.Createddate = DateTime.UtcNow; 
+                // eventItem.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli
 
-                var createdEvent = await _eventRepository.AddAsync(eventItem);
+                var createdEvent = await _unitOfWork.Repository<TAppEvent>().AddAsync(eventItem);
+                await _unitOfWork.CompleteAsync();
 
                 return _mapper.Map<EventDto>(createdEvent);
             }
+            catch (DbUpdateException ex) {
+                throw new InvalidOperationException($"Etkinlik oluşturulurken veritabanı hatası: {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Etkinlik oluşturulurken bir hata oluştu.", ex);
+                if (ex is ArgumentNullException || ex is ArgumentException) throw;
+                throw new InvalidOperationException("Etkinlik oluşturulurken beklenmedik bir hata oluştu.", ex);
             }
         }
 
-        /// <inheritdoc />
         public async Task<EventDto> UpdateEventAsync(EventDto eventDto)
         {
             if (eventDto?.Id == null || eventDto.Id <= 0)
                  throw new ArgumentNullException(nameof(eventDto), "Güncelleme için geçerli bir Etkinlik ID'si gereklidir.");
+            if (string.IsNullOrWhiteSpace(eventDto.Header)) {
+                 throw new ArgumentException("Etkinlik başlığı boş olamaz.", nameof(eventDto.Header));
+            }
+            if (eventDto.SiteId <= 0) { 
+                 throw new ArgumentException("Geçerli bir Site ID'si gereklidir.", nameof(eventDto.SiteId));
+            }
 
             try
             {
-                var existingEvent = await _eventRepository.GetByIdAsync(eventDto.Id.Value);
+                var existingEvent = await _unitOfWork.Repository<TAppEvent>().GetByIdAsync(eventDto.Id.Value); 
                 
-                 if (existingEvent == null || existingEvent.Isdeleted == 1)
-                    throw new KeyNotFoundException($"Güncellenecek etkinlik bulunamadı veya silinmiş: ID {eventDto.Id}");
+                if (existingEvent == null || existingEvent.Isdeleted == 1)
+                    throw new KeyNotFoundException($"Güncellenecek etkinlik bulunamadı veya silinmiş: ID {eventDto.Id.Value}");
 
-                // Orijinal değerlerini koru
                 var originalIsDeleted = existingEvent.Isdeleted;
                 var originalCreatedDate = existingEvent.Createddate;
                 var originalCreatedUser = existingEvent.Createduser;
 
                 _mapper.Map(eventDto, existingEvent);
 
-                // orijinal değerleri geri yükle
                 existingEvent.Isdeleted = originalIsDeleted;
                 existingEvent.Createddate = originalCreatedDate;
                 existingEvent.Createduser = originalCreatedUser;
+
                 existingEvent.Modifieddate = DateTime.UtcNow;
-                // existingEvent.Modifieduser = GetCurrentUserId();
+                // existingEvent.Modifieduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si eklenmeli
 
-
-                await _eventRepository.UpdateAsync(existingEvent);
+                await _unitOfWork.Repository<TAppEvent>().UpdateAsync(existingEvent);
+                await _unitOfWork.CompleteAsync();
                 
                 return _mapper.Map<EventDto>(existingEvent);
             }
+            catch (DbUpdateException ex) {
+                 throw new InvalidOperationException($"Etkinlik güncellenirken veritabanı hatası (ID: {eventDto.Id.Value}): {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Etkinlik güncellenirken bir hata oluştu (ID: {eventDto.Id}).", ex);
+                if (ex is KeyNotFoundException || ex is ArgumentNullException || ex is ArgumentException) throw;
+                throw new InvalidOperationException($"Etkinlik güncellenirken beklenmedik bir hata oluştu (ID: {eventDto.Id.Value}).", ex);
             }
         }
 
-        /// <inheritdoc />
         public async Task DeleteEventAsync(int id)
         {
+            if (id <= 0) {
+                 throw new ArgumentException("Geçerli bir etkinlik ID'si gereklidir.", nameof(id));
+            }
+
              try
             {
-                await _eventRepository.SoftDeleteAsync(id);
+                // UnitOfWork üzerinden TAppEvent repository'sine erişim ve SoftDeleteAsync çağrısı
+                // Bu metodun ilgili entity'yi bulup IsDeleted=1 ve ModifiedDate ayarladığını varsayıyoruz.
+                await _unitOfWork.Repository<TAppEvent>().SoftDeleteAsync(id);
+
+                await _unitOfWork.CompleteAsync();
             }
              catch (KeyNotFoundException ex) 
             {

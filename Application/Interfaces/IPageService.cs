@@ -7,6 +7,14 @@ namespace new_cms.Application.Interfaces
     /// Site sayfaları (TAppSitepage) yönetimi ile ilgili operasyonları tanımlayan arayüz.
     public interface IPageService
     {
+        /// Sayfalı ve filtrelenmiş sayfa listesi getirir.
+        Task<(IEnumerable<PageListDto> Items, int TotalCount)> GetPagedPagesAsync(
+            int pageNumber, 
+            int pageSize, 
+            int? siteId = null, 
+            string? searchTerm = null,
+            string? sortBy = null,
+            bool ascending = true);
 
         /// Belirtilen siteye ait tüm aktif sayfaları listeler.
         Task<IEnumerable<PageListDto>> GetPagesBySiteIdAsync(int siteId);

@@ -32,9 +32,7 @@ namespace new_cms.Application.Mappings
             // Theme Mappings
             CreateMap<TAppTheme, ThemeDto>().ReverseMap();
             
-            CreateMap<TAppThemecomponent, ThemeComponentDto>()
-                .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) 
-                .ReverseMap();
+            CreateMap<TAppThemecomponent, ThemeComponentDto>().ReverseMap();
             
             // Component Mappings
             CreateMap<TAppComponent, ComponentDto>().ReverseMap();
@@ -47,14 +45,12 @@ namespace new_cms.Application.Mappings
             CreateMap<TAppNews, NewsDto>()
                 .ForMember(dest => dest.Header, opt => opt.MapFrom(src => src.Header))
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
-                .ForMember(dest => dest.Link, opt => opt.MapFrom(src => src.Link))
-                .ForMember(dest => dest.OnDate, opt => opt.MapFrom(src => src.Ondate))
+                .ForMember(dest => dest.Link, opt => opt.MapFrom(src => src.Link)) 
                 .ForMember(dest => dest.Img, opt => opt.MapFrom(src => src.Img))
                 .ForMember(dest => dest.Tag, opt => opt.MapFrom(src => src.Tag))
                 .ForMember(dest => dest.InSlider, opt => opt.MapFrom(src => src.Inslider))
                 .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
-                .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Ispublic))
-                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
+                .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Ispublic)) 
                 .ForMember(dest => dest.ContentInner, opt => opt.MapFrom(src => src.Contentinner))
                 .ForMember(dest => dest.PriorityOrder, opt => opt.MapFrom(src => src.Priorityorder))
                 .ForMember(dest => dest.IsPublish, opt => opt.MapFrom(src => src.Ispublish))
@@ -77,15 +73,13 @@ namespace new_cms.Application.Mappings
                 .ForMember(dest => dest.Header, opt => opt.MapFrom(src => src.Header))
                 .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
                 .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Summary))
-                .ForMember(dest => dest.Link, opt => opt.MapFrom(src => src.Link))
-                .ForMember(dest => dest.OnDate, opt => opt.MapFrom(src => src.Ondate))
+                .ForMember(dest => dest.Link, opt => opt.MapFrom(src => src.Link)) 
                 .ForMember(dest => dest.Img, opt => opt.MapFrom(src => src.Img))
                 .ForMember(dest => dest.Tag, opt => opt.MapFrom(src => src.Tag))
                 .ForMember(dest => dest.Gallery, opt => opt.MapFrom(src => src.Gallery))
                 .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
                 .ForMember(dest => dest.Map, opt => opt.MapFrom(src => src.Map))
-                .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Ispublic))
-                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author))
+                .ForMember(dest => dest.IsPublic, opt => opt.MapFrom(src => src.Ispublic)) 
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.ContentInner, opt => opt.MapFrom(src => src.Contentinner))
                 .ForMember(dest => dest.PriorityOrder, opt => opt.MapFrom(src => src.Priorityorder))

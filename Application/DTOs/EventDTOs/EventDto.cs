@@ -19,10 +19,7 @@ namespace new_cms.Application.DTOs.EventDTOs
         public string? Summary { get; set; }  // Özet
         
         [StringLength(500)]
-        public string? Link { get; set; }  // Bağlantı URL'si
-        
-        [Required]
-        public DateTime OnDate { get; set; }  // Etkinlik tarihi
+        public string? Link { get; set; }  // Bağlantı URL'si 
         
         [StringLength(200)]
         public string? Img { get; set; }  // Resim URL'si
@@ -39,10 +36,7 @@ namespace new_cms.Application.DTOs.EventDTOs
         [StringLength(300)]
         public string? Map { get; set; }  // Harita bağlantısı
         
-        public int IsPublic { get; set; } = 1;  // Halka açık mı?
-        
-        [StringLength(200)]
-        public string? Author { get; set; }  // Yazar
+        public int IsPublic { get; set; } = 1;  // Halka açık mı? 
         
         [StringLength(200)]
         public string? Address { get; set; }  // Adres

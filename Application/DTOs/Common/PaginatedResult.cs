@@ -21,6 +21,18 @@ namespace new_cms.Application.DTOs.Common
         
         /// Toplam sayfa sayısı
         public int TotalPages { get; }
+        
+        /// Önceki sayfa var mı
+        public bool HasPrevious => PageNumber > 1;
+        
+        /// Sonraki sayfa var mı
+        public bool HasNext => PageNumber < TotalPages;
+        
+        /// Mevcut sayfa ilk sayfa mı 
+        public bool IsFirstPage => PageNumber == 1;
+        
+        /// Mevcut sayfa son sayfa mı
+        public bool IsLastPage => PageNumber == TotalPages;
 
         /// Sayfalama sonucu oluşturucu
         public PaginatedResult(IEnumerable<T> items, int totalCount, int pageNumber, int pageSize)

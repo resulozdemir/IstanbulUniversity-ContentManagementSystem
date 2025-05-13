@@ -15,17 +15,14 @@ namespace new_cms.Application.Services
     /// Tema yönetimi ile ilgili işlemleri gerçekleştiren servis sınıfı.
     public class ThemeService : IThemeService
     {
-        private readonly IRepository<TAppTheme> _themeRepository;
-        private readonly IRepository<TAppThemecomponent> _themeComponentRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public ThemeService(
-            IRepository<TAppTheme> themeRepository,
-            IRepository<TAppThemecomponent> themeComponentRepository,
+            IUnitOfWork unitOfWork,
             IMapper mapper)
         {
-            _themeRepository = themeRepository;
-            _themeComponentRepository = themeComponentRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -34,7 +31,7 @@ namespace new_cms.Application.Services
         {
             try
             {
-                var themes = await _themeRepository.Query()
+                var themes = await _unitOfWork.Repository<TAppTheme>().Query()
                     .Where(t => t.Isdeleted == 0)
                     .ToListAsync();
 
@@ -52,7 +49,7 @@ namespace new_cms.Application.Services
         {
             try
             {
-                var theme = await _themeRepository.Query()
+                var theme = await _unitOfWork.Repository<TAppTheme>().Query()
                     .FirstOrDefaultAsync(t => t.Id == id && t.Isdeleted == 0);
 
                 if (theme == null)
@@ -77,7 +74,8 @@ namespace new_cms.Application.Services
                 theme.Createddate = DateTime.UtcNow; 
                 // theme.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı
 
-                var createdTheme = await _themeRepository.AddAsync(theme);
+                var createdTheme = await _unitOfWork.Repository<TAppTheme>().AddAsync(theme);
+                await _unitOfWork.CompleteAsync();
 
                 return _mapper.Map<ThemeDto>(createdTheme);
             }
@@ -93,12 +91,14 @@ namespace new_cms.Application.Services
             if (themeDto?.Id == null || themeDto.Id <= 0)
                 throw new ArgumentNullException(nameof(themeDto), "Güncelleme için geçerli bir tema ID'si gereklidir.");
 
+            var themeId = themeDto.Id.Value;
+
             try
             {
-                var existingTheme = await _themeRepository.GetByIdAsync(themeDto.Id.Value);
+                var existingTheme = await _unitOfWork.Repository<TAppTheme>().GetByIdAsync(themeId);
 
                 if (existingTheme == null || existingTheme.Isdeleted == 1)
-                    throw new KeyNotFoundException($"Güncellenecek tema bulunamadı veya silinmiş: ID {themeDto.Id.Value}");
+                    throw new KeyNotFoundException($"Güncellenecek tema bulunamadı veya silinmiş: ID {themeId}");
 
                 // AutoMapper'ın üzerine yazmaması gereken alanları sakla
                 var originalIsDeleted = existingTheme.Isdeleted;
@@ -115,17 +115,18 @@ namespace new_cms.Application.Services
                 existingTheme.Modifieddate = DateTime.UtcNow;
                 // existingTheme.Modifieduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı
 
-                await _themeRepository.UpdateAsync(existingTheme);
+                await _unitOfWork.Repository<TAppTheme>().UpdateAsync(existingTheme);
+                await _unitOfWork.CompleteAsync();
 
                 return _mapper.Map<ThemeDto>(existingTheme);
             }
             catch (DbUpdateException ex)
             {
-                throw new InvalidOperationException($"Tema güncellenirken veritabanı hatası oluştu (ID: {themeDto.Id.Value}).", ex);
+                throw new InvalidOperationException($"Tema güncellenirken veritabanı hatası oluştu (ID: {themeId}).", ex);
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Tema güncellenirken beklenmedik bir hata oluştu (ID: {themeDto.Id.Value}).", ex);
+                throw new InvalidOperationException($"Tema güncellenirken beklenmedik bir hata oluştu (ID: {themeId}).", ex);
             }
         }
 
@@ -134,10 +135,24 @@ namespace new_cms.Application.Services
         {
             try
             {
-                await _themeRepository.SoftDeleteAsync(id);
+                // Önce temanın var olup olmadığını kontrol et
+                var themeToDelete = await _unitOfWork.Repository<TAppTheme>().GetByIdAsync(id);
+                if (themeToDelete == null)
+                {
+                    throw new KeyNotFoundException($"Silinecek tema bulunamadı: ID {id}");
+                }
+                else if (themeToDelete.Isdeleted == 1)
+                {
+                    throw new KeyNotFoundException($"Silinecek tema zaten silinmiş: ID {id}");
+                }
+                
+                // SoftDeleteAsync'i kullanarak silme işlemini gerçekleştir
+                await _unitOfWork.Repository<TAppTheme>().SoftDeleteAsync(id);
+                await _unitOfWork.CompleteAsync();
             }
             catch (Exception ex)
-            { 
+            {
+                if (ex is KeyNotFoundException) throw;
                 throw new InvalidOperationException($"Tema silinirken bir hata oluştu (ID: {id}).", ex);
             }
         }

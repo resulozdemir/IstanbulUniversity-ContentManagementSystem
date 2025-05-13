@@ -4,6 +4,7 @@ using new_cms.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using new_cms.Application.DTOs.Common;
 
 namespace new_cms.WebApi.Controllers
 {
@@ -19,6 +20,39 @@ namespace new_cms.WebApi.Controllers
             _pageService = pageService ;
         }
 
+        /// Sayfalı, filtrelenmiş ve sıralanmış sayfa listesini getirir.
+        /// <response code="200">Sayfa listesi başarıyla döndürüldü.</response>
+        /// <response code="400">Geçersiz sayfalama veya filtre parametreleri.</response>
+        /// <response code="500">Sayfalar listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("paged")] // GET /api/pages/paged?pageNumber=1&pageSize=10&siteId=1&sortBy=name
+        [ProducesResponseType(typeof(PaginatedResult<PageListDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<PaginatedResult<PageListDto>>> GetPagedPages(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int? siteId = null,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? sortBy = "id", 
+            [FromQuery] bool ascending = false)
+        {
+            if (pageNumber <= 0 || pageSize <= 0)
+            {
+                return BadRequest("Sayfa numarası ve sayfa boyutu pozitif olmalıdır.");
+            }
+
+            try
+            {
+                var (items, totalCount) = await _pageService.GetPagedPagesAsync(
+                    pageNumber, pageSize, siteId, searchTerm, sortBy, ascending);
+                var result = new PaginatedResult<PageListDto>(items, totalCount, pageNumber, pageSize);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Sayfalı sayfalar listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
 
         /// Belirtilen siteye ait tüm aktif sayfaları listeler.
         /// <response code="200">Sayfa listesi başarıyla döndürüldü.</response>

@@ -16,9 +16,7 @@ namespace new_cms.Application.DTOs.ThemeDTOs
 
         [Required]
         [MaxLength(200)]
-        public required string Name { get; set; }  // Bileşen adı
-        
-        public string? ComponentName { get; set; }  // Bağlı bileşenin adı (ilişkili tablodaki)
+        public required string Name { get; set; }  // Bileşen adı 
 
         public string? Description { get; set; }  // Açıklama
 
@@ -34,12 +32,6 @@ namespace new_cms.Application.DTOs.ThemeDTOs
 
         public string? FormJs { get; set; }  // Form için Javascript
 
-        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0
-
-        public string Settings { get; set; } = string.Empty;
-
-        public int OrderBy { get; set; }
-
-        public bool IsActive { get; set; } = true;
+        public int IsDeleted { get; set; } = 0;  // Varsayılan olarak 0 
     }
 } 

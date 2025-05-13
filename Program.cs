@@ -3,6 +3,7 @@ using new_cms.Application.Interfaces;
 using new_cms.Application.Services;
 using new_cms.Domain.Interfaces;
 using new_cms.Domain.Entities;
+using new_cms.Infrastructure.Persistence;
 using new_cms.Infrastructure.Persistence.Repositories;
 using new_cms.Application.Mappings;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<INoticeService, NoticeService>();
 builder.Services.AddScoped<IPageService, PageService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 
 var app = builder.Build();

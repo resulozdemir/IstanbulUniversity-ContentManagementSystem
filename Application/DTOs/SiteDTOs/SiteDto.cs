@@ -31,15 +31,12 @@ namespace new_cms.Application.DTOs.SiteDTOs
         public int? PbysId { get; set; }
         
         [StringLength(50)]
-        public string? Key { get; set; }
-        
-        [StringLength(400)]
-        public string? WpAddress { get; set; }  // Wpadress
+        public string? Key { get; set; } 
         
         [StringLength(200)]
         public string? GoogleSiteVerification { get; set; }
 
-        public int IsPublish { get; set; } = 0;
+        public int IsPublish { get; set; }
 
         public int IsDeleted { get; set; } = 0;
     }

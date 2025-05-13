@@ -16,10 +16,7 @@ namespace new_cms.Application.DTOs.NewsDTOs
         public string? Content { get; set; }  // Ana içerik
         
         [StringLength(500)]
-        public string? Link { get; set; }  // Bağlantı URL'si
-        
-        [Required]
-        public DateTime OnDate { get; set; }  // Haber tarihi
+        public string? Link { get; set; }  // Bağlantı URL'si 
         
         [StringLength(4000)]
         public string? Img { get; set; }  // Resim URL'si
@@ -32,10 +29,7 @@ namespace new_cms.Application.DTOs.NewsDTOs
         [Required]
         public int SiteId { get; set; }  // Bağlı olduğu site ID'si
         
-        public int IsPublic { get; set; } = 1;  // Halka açık mı?
-        
-        [StringLength(200)]
-        public string? Author { get; set; }  // Yazar
+        public int IsPublic { get; set; } = 1;  // Halka açık mı? 
         
         public string? ContentInner { get; set; }  // İç içerik
         

@@ -33,7 +33,10 @@ namespace new_cms.Application.Interfaces
         // Sayfalı ve filtrelenmiş site listesi döndürür
         Task<(IEnumerable<SiteListDto> Items, int TotalCount)> GetPagedSitesAsync(
             int pageNumber,
-            int pageSize);
+            int pageSize,
+            string? searchTerm = null,
+            string? sortBy = null,
+            bool ascending = true);
             
 
         /// Belirli bir şablonu (template) kullanan aktif siteleri listeler.

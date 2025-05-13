@@ -24,7 +24,5 @@ namespace new_cms.Application.Interfaces
         // Domain adına göre kayıt getirir
         Task<SiteDomainDto?> GetByDomainAsync(string domain);
         
-        // Belirli bir dile ait tüm domain'leri listeler
-        Task<IEnumerable<SiteDomainDto>> GetDomainsByLanguageAsync(string language);
     }
 } 

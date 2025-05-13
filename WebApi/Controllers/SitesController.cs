@@ -45,13 +45,16 @@ namespace new_cms.WebApi.Controllers
         /// <response code="200">Site listesi başarıyla döndürüldü.</response>
         /// <response code="400">Geçersiz sayfalama parametreleri.</response>
         /// <response code="500">Siteler listelenirken sunucu hatası oluştu.</response>
-        [HttpGet("paged")] // GET /api/sites/paged?pageNumber=1&pageSize=5
+        [HttpGet("paged")] // GET /api/sites/paged?pageNumber=1&pageSize=5&sortBy=name
         [ProducesResponseType(typeof(PaginatedResult<SiteListDto>), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<ActionResult<PaginatedResult<SiteListDto>>> GetPagedSites(
             [FromQuery] int pageNumber = 1, 
-            [FromQuery] int pageSize = 10)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] string? sortBy = "createddate", 
+            [FromQuery] bool ascending = false)
         {
             if (pageNumber <= 0 || pageSize <= 0)
             {
@@ -60,7 +63,8 @@ namespace new_cms.WebApi.Controllers
 
             try
             {
-                var (items, totalCount) = await _siteService.GetPagedSitesAsync(pageNumber, pageSize);
+                var (items, totalCount) = await _siteService.GetPagedSitesAsync(
+                    pageNumber, pageSize, searchTerm, sortBy, ascending);
                 var result = new PaginatedResult<SiteListDto>(items, totalCount, pageNumber, pageSize);
                 return Ok(result);
             }

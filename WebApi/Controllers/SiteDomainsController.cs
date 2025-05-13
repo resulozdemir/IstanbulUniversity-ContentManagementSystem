@@ -47,33 +47,6 @@ namespace new_cms.WebApi.Controllers
         }
 
 
-        /// Belirtilen dile ait tüm aktif alan adlarını listeler.
-        /// <response code="200">Alan adı listesi başarıyla döndürüldü.</response>
-        /// <response code="400">Geçersiz dil kodu.</response>
-        /// <response code="500">Alan adlarını listelerken sunucu hatası oluştu.</response>
-        [HttpGet("bylanguage/{language}")] // GET /api/sitedomains/bylanguage/tr
-        [ProducesResponseType(typeof(IEnumerable<SiteDomainDto>), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
-        public async Task<ActionResult<IEnumerable<SiteDomainDto>>> GetDomainsByLanguage(string language)
-        {
-            if (string.IsNullOrWhiteSpace(language))
-            {
-                return BadRequest("Geçerli bir dil kodu gereklidir.");
-            }
-
-            try
-            {
-                var domains = await _siteDomainService.GetDomainsByLanguageAsync(language);
-                return Ok(domains);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Dile göre alan adları listelenirken hata oluştu (Dil: {language}). Detay: {ex.Message}");
-            }
-        }
-
-
         /// Alan adına göre aktif kaydı getirir.
         /// <response code="200">Alan adı başarıyla döndürüldü.</response>
         /// <response code="400">Geçersiz alan adı.</response>

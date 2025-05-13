@@ -7,66 +7,67 @@ using new_cms.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace new_cms.Application.Services
-{
-    /// Duyuru (Notice) işlemleri için servis implementasyonu.
+{ 
+    /// Duyuru (TAppNotice) varlıkları ile ilgili işlemleri gerçekleştiren servis sınıfı. 
     public class NoticeService : INoticeService
     {
-        private readonly IRepository<TAppNotice> _noticeRepository;
+        // UnitOfWork ve AutoMapper bağımlılıkları
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
+ 
+        /// NoticeService sınıfının yeni bir örneğini başlatır. 
         public NoticeService(
-            IRepository<TAppNotice> noticeRepository,
+            IUnitOfWork unitOfWork, 
             IMapper mapper)
         {
-            _noticeRepository = noticeRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         /// <inheritdoc />
         public async Task<(IEnumerable<NoticeListDto> Items, int TotalCount)> GetPagedNoticesAsync(
             int pageNumber, int pageSize, int? siteId = null, string? searchTerm = null, string? sortBy = null, bool ascending = true)
-        {
-            try
-            {
-                // Silinmemiş duyuruları sorgula
-                var query = _noticeRepository.Query().Where(n => n.Isdeleted == 0);
+        { 
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;  
 
-                // Site ID'sine göre filtrele
-                if (siteId.HasValue)
+            try
+            { 
+                var query = _unitOfWork.Repository<TAppNotice>().Query().Where(n => n.Isdeleted == 0);  
+ 
+                if (siteId.HasValue && siteId.Value > 0)
                 {
                     query = query.Where(n => n.Siteid == siteId.Value);
                 }
-
-                // Arama terimine göre filtrele (Başlık, İçerik, Etiket)
+ 
                 if (!string.IsNullOrWhiteSpace(searchTerm))
                 {
-                     query = query.Where(n => n.Header.Contains(searchTerm) || 
-                                             (n.Content != null && n.Content.Contains(searchTerm)) ||
-                                             (n.Tag != null && n.Tag.Contains(searchTerm)));
+                     query = query.Where(n => 
+                        (n.Header != null && n.Header.Contains(searchTerm)) || 
+                        (n.Content != null && n.Content.Contains(searchTerm)) ||
+                        (n.Tag != null && n.Tag.Contains(searchTerm))
+                     );
                 }
                 
-                // Dinamik sıralama
                 if (!string.IsNullOrWhiteSpace(sortBy))
                 {
-                    query = sortBy.ToLower() switch
+                    query = sortBy.ToLowerInvariant() switch 
                     {
                         "id" => ascending ? query.OrderBy(n => n.Id) : query.OrderByDescending(n => n.Id),
                         "header" => ascending ? query.OrderBy(n => n.Header) : query.OrderByDescending(n => n.Header),
                         "date" => ascending ? query.OrderBy(n => n.Ondate) : query.OrderByDescending(n => n.Ondate),
-                        "created" => ascending ? query.OrderBy(n => n.Createddate) : query.OrderByDescending(n => n.Createddate),
-                        "modified" => ascending ? query.OrderBy(n => n.Modifieddate) : query.OrderByDescending(n => n.Modifieddate),
-                        "publish" => ascending ? query.OrderBy(n => n.Ispublish) : query.OrderByDescending(n => n.Ispublish),
-                        "category" => ascending ? query.OrderBy(n => n.Categoryid) : query.OrderByDescending(n => n.Categoryid),
-                        _ => ascending ? query.OrderBy(n => n.Ondate) : query.OrderByDescending(n => n.Ondate) // Varsayılan tarih sıralaması
+                        "createddate" => ascending ? query.OrderBy(n => n.Createddate) : query.OrderByDescending(n => n.Createddate), 
+                        "modifieddate" => ascending ? query.OrderBy(n => n.Modifieddate) : query.OrderByDescending(n => n.Modifieddate), 
+                        "ispublish" => ascending ? query.OrderBy(n => n.Ispublish) : query.OrderByDescending(n => n.Ispublish), 
+                        "categoryid" => ascending ? query.OrderBy(n => n.Categoryid) : query.OrderByDescending(n => n.Categoryid), 
+                        _ => ascending ? query.OrderBy(n => n.Ondate) : query.OrderByDescending(n => n.Ondate) 
                     };
                 }
                 else
                 {
-                    // Varsayılan sıralama (sortBy belirtilmemişse)
                     query = ascending ? query.OrderBy(n => n.Ondate) : query.OrderByDescending(n => n.Ondate);
                 }
                 
@@ -78,16 +79,20 @@ namespace new_cms.Application.Services
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Duyurular listelenirken bir hata oluştu.", ex);
+                throw new InvalidOperationException("Sayfalanmış duyurular listelenirken bir hata oluştu.", ex);
             }
         }
 
-        /// <inheritdoc />
         public async Task<NoticeDto?> GetNoticeByIdAsync(int id)
         {
+            if (id <= 0) {
+                 throw new ArgumentException("Geçerli bir duyuru ID'si gereklidir.", nameof(id));
+            }
+
             try
             {
-                var notice = await _noticeRepository.Query().FirstOrDefaultAsync(n => n.Id == id && n.Isdeleted == 0);
+                var notice = await _unitOfWork.Repository<TAppNotice>().Query()
+                                    .FirstOrDefaultAsync(n => n.Id == id && n.Isdeleted == 0); 
                 
                 return notice == null ? null : _mapper.Map<NoticeDto>(notice);
             }
@@ -97,69 +102,100 @@ namespace new_cms.Application.Services
             }
         }
 
-        /// <inheritdoc />
         public async Task<NoticeDto> CreateNoticeAsync(NoticeDto noticeDto)
         {
+             if (noticeDto == null) {
+                 throw new ArgumentNullException(nameof(noticeDto), "Oluşturulacak duyuru bilgileri boş olamaz.");
+             }
+             if (string.IsNullOrWhiteSpace(noticeDto.Header)) {
+                 throw new ArgumentException("Duyuru başlığı boş olamaz.", nameof(noticeDto.Header));
+             }
+             if (noticeDto.SiteId <= 0) { 
+                 throw new ArgumentException("Geçerli bir Site ID'si gereklidir.", nameof(noticeDto.SiteId));
+             }
+
              try
             {
                 var notice = _mapper.Map<TAppNotice>(noticeDto);
                 notice.Isdeleted = 0;
-                notice.Createddate = DateTime.UtcNow;
-                // notice.Createduser = GetCurrentUserId(); 
+                notice.Createddate = DateTime.UtcNow; 
+                // notice.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli
 
-                var createdNotice = await _noticeRepository.AddAsync(notice);
+                var createdNotice = await _unitOfWork.Repository<TAppNotice>().AddAsync(notice);
+                await _unitOfWork.CompleteAsync();
                 
                 return _mapper.Map<NoticeDto>(createdNotice);
             }
+            catch (DbUpdateException ex) {
+                throw new InvalidOperationException($"Duyuru oluşturulurken veritabanı hatası: {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Duyuru oluşturulurken bir hata oluştu.", ex);
+                if (ex is ArgumentNullException || ex is ArgumentException) throw;
+                throw new InvalidOperationException("Duyuru oluşturulurken beklenmedik bir hata oluştu.", ex);
             }
         }
 
-        /// <inheritdoc />
         public async Task<NoticeDto> UpdateNoticeAsync(NoticeDto noticeDto)
         {
             if (noticeDto?.Id == null || noticeDto.Id <= 0)
                  throw new ArgumentNullException(nameof(noticeDto), "Güncelleme için geçerli bir Duyuru ID'si gereklidir.");
+             if (string.IsNullOrWhiteSpace(noticeDto.Header)) {
+                 throw new ArgumentException("Duyuru başlığı boş olamaz.", nameof(noticeDto.Header));
+             }
+             if (noticeDto.SiteId <= 0) { 
+                 throw new ArgumentException("Geçerli bir Site ID'si gereklidir.", nameof(noticeDto.SiteId));
+             }
 
              try
             {
-                var existingNotice = await _noticeRepository.GetByIdAsync(noticeDto.Id);
+                var existingNotice = await _unitOfWork.Repository<TAppNotice>().GetByIdAsync(noticeDto.Id); 
                 
+                // Duyuru var mı ve silinmemiş mi kontrolü
                 if (existingNotice == null || existingNotice.Isdeleted == 1)
                     throw new KeyNotFoundException($"Güncellenecek duyuru bulunamadı veya silinmiş: ID {noticeDto.Id}");
 
-                // Orijinal değerlerini koru
                 var originalIsDeleted = existingNotice.Isdeleted;
                 var originalCreatedDate = existingNotice.Createddate;
                 var originalCreatedUser = existingNotice.Createduser;
+                // var originalSiteId = existingNotice.Siteid; // SiteID genellikle güncellenmez, gerekirse bu da korunmalı.
 
                 _mapper.Map(noticeDto, existingNotice);
 
-                // değerleri geri yükle
                 existingNotice.Isdeleted = originalIsDeleted;
                 existingNotice.Createddate = originalCreatedDate;
                 existingNotice.Createduser = originalCreatedUser;
-                existingNotice.Modifieddate = DateTime.UtcNow;
-                // existingNotice.Modifieduser = GetCurrentUserId();
+                // existingNotice.Siteid = originalSiteId; // Gerekirse
 
-                await _noticeRepository.UpdateAsync(existingNotice);
+                // Güncelleme bilgilerini ayarla
+                existingNotice.Modifieddate = DateTime.UtcNow;
+                // existingNotice.Modifieduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si eklenmeli
+
+                await _unitOfWork.Repository<TAppNotice>().UpdateAsync(existingNotice);
+                await _unitOfWork.CompleteAsync();
                 
                 return _mapper.Map<NoticeDto>(existingNotice);
             }
+            catch (DbUpdateException ex) {
+                 throw new InvalidOperationException($"Duyuru güncellenirken veritabanı hatası (ID: {noticeDto.Id}): {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Duyuru güncellenirken bir hata oluştu (ID: {noticeDto.Id}).", ex);
+                if (ex is KeyNotFoundException || ex is ArgumentNullException || ex is ArgumentException) throw;
+                throw new InvalidOperationException($"Duyuru güncellenirken beklenmedik bir hata oluştu (ID: {noticeDto.Id}).", ex);
             }
         }
 
-        /// <inheritdoc />
         public async Task DeleteNoticeAsync(int id)
         {
+            if (id <= 0) {
+                 throw new ArgumentException("Geçerli bir duyuru ID'si gereklidir.", nameof(id));
+            }
+
             try
             {
-                await _noticeRepository.SoftDeleteAsync(id); 
+                await _unitOfWork.Repository<TAppNotice>().SoftDeleteAsync(id); 
+                await _unitOfWork.CompleteAsync();
             }
             catch (KeyNotFoundException ex) 
             {
