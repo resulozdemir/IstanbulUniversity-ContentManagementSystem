@@ -12,7 +12,6 @@ namespace new_cms.Application.DTOs.SiteDTOs
         [StringLength(500)]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(100)]
         public string Domain { get; set; } = string.Empty;
 
@@ -24,6 +23,8 @@ namespace new_cms.Application.DTOs.SiteDTOs
 
         [StringLength(200)]
         public string Language { get; set; } = "tr";
+
+        public int IsTemplate { get; set; }
 
         [StringLength(200)]
         public string? AnalyticId { get; set; }

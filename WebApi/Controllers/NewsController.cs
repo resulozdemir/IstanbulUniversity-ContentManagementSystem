@@ -16,7 +16,7 @@ namespace new_cms.WebApi.Controllers
         private readonly INewsService _newsService;
         public NewsController(INewsService newsService) 
         {
-            _newsService = newsService;
+            _newsService = newsService; 
         }
 
         /// Sayfalı, filtrelenmiş ve sıralanmış haber listesini getirir.
@@ -57,6 +57,69 @@ namespace new_cms.WebApi.Controllers
             }
         }
 
+        /// Sistemdeki tüm haberleri listeler.
+        /// <response code="200">Tüm haberler başarıyla döndürüldü.</response>
+        /// <response code="500">Haberler listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("all")] // GET /api/news/all
+        [ProducesResponseType(typeof(IEnumerable<NewsListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<NewsListDto>>> GetAllNews()
+        {
+            try
+            {
+                var allNews = await _newsService.GetAllNewsAsync();
+                return Ok(allNews);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Tüm haberler listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
+
+        /// Sistemdeki tüm aktif haberleri listeler.
+        /// <response code="200">Aktif haberler başarıyla döndürüldü.</response>
+        /// <response code="500">Aktif haberler listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("active")] // GET /api/news/active
+        [ProducesResponseType(typeof(IEnumerable<NewsListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<NewsListDto>>> GetActiveNews()
+        {
+            try
+            {
+                var activeNews = await _newsService.GetActiveNewsAsync();
+                return Ok(activeNews);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Aktif haberler listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
+
+        /// Belirtilen siteye ait tüm haberleri listeler.
+        /// <response code="200">Site haberleri başarıyla döndürüldü.</response>
+        /// <response code="400">Geçersiz site ID'si.</response>
+        /// <response code="500">Site haberleri listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("site/{siteId}")] // GET /api/news/site/1
+        [ProducesResponseType(typeof(IEnumerable<NewsListDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<NewsListDto>>> GetNewsBySiteId(int siteId)
+        {
+            if (siteId <= 0)
+            {
+                return BadRequest("Geçerli bir site ID'si gereklidir.");
+            }
+
+            try
+            {
+                var siteNews = await _newsService.GetNewsBySiteIdAsync(siteId);
+                return Ok(siteNews);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Site haberleri listelenirken bir hata oluştu (Site ID: {siteId}): {ex.Message}");
+            }
+        }
 
         /// Belirtilen ID'ye sahip aktif haberi getirir.
         /// <response code="200">Haber başarıyla döndürüldü.</response>

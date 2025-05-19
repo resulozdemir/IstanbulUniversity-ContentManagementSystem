@@ -27,5 +27,14 @@ namespace new_cms.Application.Interfaces
 
         /// Belirtilen ID'ye sahip etkinliği siler (soft delete).
         Task DeleteEventAsync(int id);
+
+        /// Belirtilen siteye ait etkinlikleri listeler.
+        Task<IEnumerable<EventListDto>> GetEventsBySiteIdAsync(int siteId);
+
+        /// Sistemdeki tüm aktif etkinlikleri listeler.
+        Task<IEnumerable<EventListDto>> GetActiveEventsAsync();
+
+        /// Yayınlanmış etkinlikleri listeler.
+        Task<IEnumerable<EventListDto>> GetPublishedEventsAsync();
     }
 } 

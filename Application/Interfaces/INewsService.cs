@@ -27,5 +27,14 @@ namespace new_cms.Application.Interfaces
 
         /// Belirtilen ID'ye sahip haberi siler (soft delete).
         Task DeleteNewsAsync(int id);
+
+        /// Sistemdeki tüm haberleri listeler.
+        Task<IEnumerable<NewsListDto>> GetAllNewsAsync();
+
+        /// Belirtilen siteye ait haberleri listeler.
+        Task<IEnumerable<NewsListDto>> GetNewsBySiteIdAsync(int siteId);
+
+        /// Sistemdeki tüm aktif haberleri listeler.
+        Task<IEnumerable<NewsListDto>> GetActiveNewsAsync();
     }
 } 

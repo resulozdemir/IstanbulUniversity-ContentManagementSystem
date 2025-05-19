@@ -25,5 +25,8 @@ namespace new_cms.Application.Interfaces
 
         /// Belirli bir site için kullanılması gereken tüm bileşenleri ve verilerini getirir.
         Task<IEnumerable<SiteComponentDataDto>> GetComponentsForSiteAsync(int siteId);
+
+        /// Belirtilen ID'ye sahip bileşeni getirir.
+        Task<ComponentDto?> GetComponentByIdAsync(int id);
     }
 } 

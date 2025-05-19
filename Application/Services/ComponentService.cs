@@ -245,5 +245,26 @@ namespace new_cms.Application.Services
                 throw new InvalidOperationException($"Tema-Bileşen ilişkisi güncellenirken beklenmedik bir hata oluştu (ID: {themeComponentId}).", ex);
             }
         }
+
+        /// Belirtilen ID'ye sahip bileşeni getirir.
+        public async Task<ComponentDto?> GetComponentByIdAsync(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Geçerli bir bileşen ID'si gereklidir.", nameof(id));
+            }
+
+            try
+            {
+                var component = await _unitOfWork.Repository<TAppComponent>().Query()
+                    .FirstOrDefaultAsync(c => c.Id == id && c.IsDeleted == 0);
+                    
+                return component == null ? null : _mapper.Map<ComponentDto>(component);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Bileşen getirilirken bir hata oluştu (ID: {id}).", ex);
+            }
+        }
     }
 } 

@@ -42,9 +42,7 @@ namespace new_cms.Application.Services
  
         /// Yeni bir site alan adı (domain) oluşturur.
         public async Task<SiteDomainDto> CreateDomainAsync(SiteDomainDto domainDto)
-        { 
-            if (string.IsNullOrWhiteSpace(domainDto.Domain))
-                throw new ArgumentException("Domain alanı boş olamaz.", nameof(domainDto.Domain));
+        {
             if (domainDto.SiteId <= 0) 
                  throw new ArgumentException("Geçerli bir Site ID belirtilmelidir.", nameof(domainDto.SiteId));
             if (string.IsNullOrWhiteSpace(domainDto.Language))
@@ -52,8 +50,8 @@ namespace new_cms.Application.Services
             if (string.IsNullOrWhiteSpace(domainDto.Key))
                 throw new ArgumentException("Key alanı boş olamaz.", nameof(domainDto.Key));
 
- 
-            if (!await IsDomainUniqueAsync(domainDto.Domain))
+            // Domain boş değilse benzersizlik kontrolü yap
+            if (!string.IsNullOrWhiteSpace(domainDto.Domain) && !await IsDomainUniqueAsync(domainDto.Domain))
                 throw new InvalidOperationException($"'{domainDto.Domain}' alan adı zaten kullanılıyor.");
 
             try

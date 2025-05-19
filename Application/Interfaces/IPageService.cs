@@ -33,5 +33,11 @@ namespace new_cms.Application.Interfaces
 
         /// Belirtilen ID'ye sahip sayfayı pasif hale getirir (soft delete).
         Task DeletePageAsync(int id);
+
+        /// Sistemdeki tüm sayfaları listeler.
+        Task<IEnumerable<PageListDto>> GetAllPagesAsync();
+
+        /// Sistemdeki tüm aktif sayfaları listeler.
+        Task<IEnumerable<PageListDto>> GetActivePagesAsync();
     }
 } 

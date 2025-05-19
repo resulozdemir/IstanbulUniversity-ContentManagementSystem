@@ -8,6 +8,7 @@ using new_cms.Application.DTOs.NoticeDTOs;
 using new_cms.Application.DTOs.ThemeDTOs;
 using new_cms.Application.DTOs.ComponentDTOs;
 using new_cms.Application.DTOs.PageDTOs;
+using new_cms.Application.DTOs.TemplateDTOs;
 
 namespace new_cms.Application.Mappings
 {
@@ -33,6 +34,20 @@ namespace new_cms.Application.Mappings
             CreateMap<TAppTheme, ThemeDto>().ReverseMap();
             
             CreateMap<TAppThemecomponent, ThemeComponentDto>().ReverseMap();
+            
+            // Template Mappings
+            CreateMap<TAppSite, TemplateDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.ThemeId, opt => opt.MapFrom(src => src.Themeid))
+                .ForMember(dest => dest.ThemeName, opt => opt.Ignore())
+                .ReverseMap()
+                .ForMember(dest => dest.Istemplate, opt => opt.MapFrom(src => 1)) // 1: Bu bir şablondur
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
             
             // Component Mappings
             CreateMap<TAppComponent, ComponentDto>().ReverseMap();

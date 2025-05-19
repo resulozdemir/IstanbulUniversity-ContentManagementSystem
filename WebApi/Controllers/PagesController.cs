@@ -54,6 +54,44 @@ namespace new_cms.WebApi.Controllers
             }
         }
 
+        /// Sistemdeki tüm sayfaları listeler.
+        /// <response code="200">Tüm sayfalar başarıyla döndürüldü.</response>
+        /// <response code="500">Sayfalar listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("all")] // GET /api/pages/all
+        [ProducesResponseType(typeof(IEnumerable<PageListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<PageListDto>>> GetAllPages()
+        {
+            try
+            {
+                var pages = await _pageService.GetAllPagesAsync();
+                return Ok(pages);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Tüm sayfalar listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
+
+        /// Sistemdeki tüm aktif sayfaları listeler.
+        /// <response code="200">Aktif sayfalar başarıyla döndürüldü.</response>
+        /// <response code="500">Aktif sayfalar listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("active")] // GET /api/pages/active
+        [ProducesResponseType(typeof(IEnumerable<PageListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<PageListDto>>> GetActivePages()
+        {
+            try
+            {
+                var activePages = await _pageService.GetActivePagesAsync();
+                return Ok(activePages);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Aktif sayfalar listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
+
         /// Belirtilen siteye ait tüm aktif sayfaları listeler.
         /// <response code="200">Sayfa listesi başarıyla döndürüldü.</response>
         /// <response code="400">Geçersiz site ID'si.</response>

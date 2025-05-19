@@ -19,16 +19,19 @@ namespace new_cms.Application.Services
         private readonly ISiteDomainService _siteDomainService;
         
         private readonly IMapper _mapper;
+        private readonly ITemplateService _templateService;
 
         /// SiteService sınıfının yeni bir örneğini başlatır.
         public SiteService(
             IUnitOfWork unitOfWork, 
             ISiteDomainService siteDomainService,
-            IMapper mapper)
+            IMapper mapper,
+            ITemplateService templateService)
         {
             _unitOfWork = unitOfWork;
             _siteDomainService = siteDomainService;
             _mapper = mapper;
+            _templateService = templateService;
         }
 
         /// Tüm aktif siteleri listeler.
@@ -91,12 +94,8 @@ namespace new_cms.Application.Services
         /// Yeni bir site oluşturur ve ilişkili birincil alan adını kaydeder.
         public async Task<SiteDto> CreateSiteAsync(SiteDto siteDto)
         { 
-            if (string.IsNullOrWhiteSpace(siteDto.Domain))
-            {
-                 throw new ArgumentException("Site için birincil domain adı boş olamaz.", nameof(siteDto.Domain));
-            }
- 
-            if (!await _siteDomainService.IsDomainUniqueAsync(siteDto.Domain))
+            // Domain adı boş değilse benzersizlik kontrolü yap
+            if (!string.IsNullOrWhiteSpace(siteDto.Domain) && !await _siteDomainService.IsDomainUniqueAsync(siteDto.Domain))
             {
                 throw new InvalidOperationException($"'{siteDto.Domain}' alan adı zaten kullanılıyor.");
             }
@@ -115,11 +114,11 @@ namespace new_cms.Application.Services
                 var siteDomainDto = new SiteDomainDto
                 {
                     SiteId = createdSite.Id, 
-                    Domain = createdSite.Domain ?? string.Empty, 
+                    Domain = string.IsNullOrWhiteSpace(createdSite.Domain) ? string.Empty : createdSite.Domain, 
                     Language = createdSite.Language ?? "tr", 
                     AnalyticId = createdSite.Analyticid,
-                    GoogleSiteVerification = createdSite.Googlesiteverification,
-                    Key = createdSite.Domain?.Replace(".","_") ?? Guid.NewGuid().ToString() 
+                    GoogleSiteVerification = createdSite.Googlesiteverification, 
+                    Key = !string.IsNullOrWhiteSpace(createdSite.Domain) ? createdSite.Domain.Replace(".","_") : Guid.NewGuid().ToString() 
                 };
  
                 await _siteDomainService.CreateDomainAsync(siteDomainDto); 
@@ -141,7 +140,7 @@ namespace new_cms.Application.Services
         /// Mevcut bir sitenin bilgilerini günceller.
         public async Task<SiteDto> UpdateSiteAsync(SiteDto siteDto)
         {
-            if (!siteDto.Id.HasValue || siteDto.Id <= 0)
+            if (siteDto.Id <= 0)
                 throw new ArgumentException("Güncelleme için geçerli bir Site ID gereklidir.", nameof(siteDto.Id));
 
             try
@@ -149,7 +148,7 @@ namespace new_cms.Application.Services
                 var existingSite = await _unitOfWork.Repository<TAppSite>().GetByIdAsync(siteDto.Id.Value);
 
                 if (existingSite == null || existingSite.Isdeleted == 1)
-                    throw new KeyNotFoundException($"Site bulunamadı veya silinmiş: ID {siteDto.Id.Value}");
+                    throw new KeyNotFoundException($"Site bulunamadı veya silinmiş: ID {siteDto.Id}");
 
                 // AutoMapper'ın üzerine yazmaması gereken alanları saklama
                 var originalIsDeleted = existingSite.Isdeleted;
@@ -173,12 +172,12 @@ namespace new_cms.Application.Services
             }
             catch (DbUpdateException ex)
             {
-                throw new InvalidOperationException($"Site güncellenirken veritabanı hatası (ID: {siteDto.Id.Value}): {ex.InnerException?.Message ?? ex.Message}", ex);
+                throw new InvalidOperationException($"Site güncellenirken veritabanı hatası (ID: {siteDto.Id}): {ex.InnerException?.Message ?? ex.Message}", ex);
             }
             catch (Exception ex)
             {
                 if (ex is KeyNotFoundException || ex is ArgumentException) throw;  
-                throw new InvalidOperationException($"Site güncellenirken beklenmedik bir hata (ID: {siteDto.Id.Value}): {ex.Message}", ex);
+                throw new InvalidOperationException($"Site güncellenirken beklenmedik bir hata (ID: {siteDto.Id}): {ex.Message}", ex);
             }
         }
 
@@ -194,24 +193,6 @@ namespace new_cms.Application.Services
             catch (Exception ex) 
             {
                 throw new InvalidOperationException($"Site silinirken hata (ID: {id}): {ex.Message}", ex);
-            }
-        }
-
-        /// Şablon olarak işaretlenmiş aktif siteleri listeler.
-        public async Task<IEnumerable<SiteListDto>> GetSiteTemplatesAsync()
-        {
-            try
-            {
-                var templates = await _unitOfWork.Repository<TAppSite>().Query()
-                    .Where(s => s.Istemplate == 1 && s.Isdeleted == 0) // Şablon ve aktif olanlar
-                    .ToListAsync();
-
-                var templateDtos = _mapper.Map<IEnumerable<SiteListDto>>(templates);
-                return templateDtos;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException($"Site şablonları listelenirken hata: {ex.Message}", ex);
             }
         }
 
@@ -312,29 +293,70 @@ namespace new_cms.Application.Services
             }
         }
 
-        /// Belirli bir şablonu (template) kullanan aktif siteleri listeler.
-        public async Task<IEnumerable<SiteListDto>> GetSitesByTemplateAsync(int templateId)
+        /// Belirtilen bir şablonu kullanarak yeni bir site oluşturur ve şablon içeriğini kopyalar.
+        public async Task<SiteDetailDto> CreateSiteFromTemplateAsync(SiteDto siteDto)
         {
-            if (templateId <= 0) {
-                 throw new ArgumentException("Geçerli bir şablon ID'si gereklidir.", nameof(templateId));
+            // 1. Kaynak şablonun ID'sini siteDto.TemplateId'den al.
+            if (siteDto.TemplateId == null || siteDto.TemplateId.Value <= 0)
+            {
+                throw new ArgumentException("Yeni site oluşturmak için geçerli bir kaynak şablon ID'si (TemplateId) belirtilmelidir.");
+            }
+            int sourceTemplateId = siteDto.TemplateId.Value;
+
+            var sourceTemplate = await _unitOfWork.Repository<TAppSite>().Query()
+                .AsNoTracking() 
+                .FirstOrDefaultAsync(s => s.Id == sourceTemplateId && s.Istemplate == 1 && s.Isdeleted == 0);
+            
+            if (sourceTemplate == null)
+            {
+                throw new KeyNotFoundException($"Kaynak şablon (ID: {sourceTemplateId}) bulunamadı, aktif değil veya bir şablon değil.");
             }
 
-            try
-            {
-                 // UnitOfWork üzerinden TAppSite repository'sine erişim
-                var sites = await _unitOfWork.Repository<TAppSite>().Query()
-                    .Where(s => s.Templateid == templateId    // Belirtilen şablonu kullanan
-                                && s.Isdeleted == 0           // Aktif olan
-                                && s.Istemplate == 0)         // Şablonun kendisi olmayan
-                    .ToListAsync();
+            if (siteDto.IsTemplate == 1) {
+                 throw new ArgumentException("Şablondan oluşturulan bir site, kendisi şablon olarak işaretlenemez (IsTemplate 0 olmalıdır).");
+            }
 
-                var siteDtos = _mapper.Map<IEnumerable<SiteListDto>>(sites);
-                return siteDtos;
-            }
-            catch (Exception ex)
+            var newSiteEntity = _mapper.Map<TAppSite>(siteDto);
+            newSiteEntity.Id = 0; 
+            newSiteEntity.Istemplate = 0; 
+            newSiteEntity.Isdeleted = 0;
+            newSiteEntity.Createddate = DateTime.UtcNow;
+            newSiteEntity.Templateid = sourceTemplateId; 
+
+            var newSiteThemeExists = await _unitOfWork.Repository<TAppTheme>().Query()
+                                        .AnyAsync(t => t.Id == newSiteEntity.Themeid && t.Isdeleted == 0);
+            if (!newSiteThemeExists)
             {
-                throw new InvalidOperationException($"Şablona göre siteler listelenirken hata oluştu (Template ID: {templateId}): {ex.Message}", ex);
+                throw new KeyNotFoundException($"Yeni site için belirtilen tema ID ({newSiteEntity.Themeid}) bulunamadı veya aktif değil.");
             }
+            
+            if (!string.IsNullOrWhiteSpace(newSiteEntity.Domain) && !await _siteDomainService.IsDomainUniqueAsync(newSiteEntity.Domain, null)) 
+            {
+                throw new InvalidOperationException($"'{newSiteEntity.Domain}' alan adı zaten kullanılıyor.");
+            }
+
+            var createdSiteEntity = await _unitOfWork.Repository<TAppSite>().AddAsync(newSiteEntity);
+            await _unitOfWork.CompleteAsync(); 
+
+            if (!string.IsNullOrWhiteSpace(createdSiteEntity.Domain))
+            {
+                var siteDomainDto = new SiteDomainDto
+                {
+                    SiteId = createdSiteEntity.Id,
+                    Domain = createdSiteEntity.Domain,
+                    Language = createdSiteEntity.Language ?? "tr",
+                    AnalyticId = createdSiteEntity.Analyticid,
+                    GoogleSiteVerification = createdSiteEntity.Googlesiteverification,
+                    Key = createdSiteEntity.Domain.Replace(".", "_") 
+                };
+                await _siteDomainService.CreateDomainAsync(siteDomainDto);
+                await _unitOfWork.CompleteAsync(); 
+            }
+
+            await _templateService.CopyTemplateContentToSiteAsync(sourceTemplateId, createdSiteEntity.Id);
+
+            return await GetSiteByIdAsync(createdSiteEntity.Id) 
+                   ?? throw new InvalidOperationException($"Şablondan oluşturulan site (ID: {createdSiteEntity.Id}) oluşturulduktan sonra bulunamadı.");
         }
 
         /// Belirtilen ID'ye sahip siteyi yayına alır  

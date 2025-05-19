@@ -268,5 +268,46 @@ namespace new_cms.Application.Services
             }
             return menuTreeItem;
         }
+
+        /// Sistemdeki tüm menüleri listeler.
+        public async Task<IEnumerable<MenuListDto>> GetAllMenusAsync()
+        {
+            try
+            {
+                var allMenus = await _unitOfWork.Repository<TAppMenu>().Query()
+                    .OrderBy(m => m.Siteid)
+                    .ThenBy(m => m.Menuorder)
+                    .ToListAsync();
+                
+                return _mapper.Map<IEnumerable<MenuListDto>>(allMenus);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Tüm menüler listelenirken bir hata oluştu.", ex);
+            }
+        }
+
+        /// Belirtilen üst menüye ait alt menüleri listeler.
+        public async Task<IEnumerable<MenuListDto>> GetMenusByParentIdAsync(int parentId)
+        {
+            if (parentId <= 0)
+            {
+                throw new ArgumentException("Geçerli bir üst menü ID'si gereklidir.", nameof(parentId));
+            }
+
+            try
+            {
+                var childMenus = await _unitOfWork.Repository<TAppMenu>().Query()
+                    .Where(m => m.Parentid == parentId && m.Isdeleted == 0)
+                    .OrderBy(m => m.Menuorder)
+                    .ToListAsync();
+                
+                return _mapper.Map<IEnumerable<MenuListDto>>(childMenus);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Alt menüler listelenirken hata oluştu (Üst menü ID: {parentId}).", ex);
+            }
+        }
     }
 } 

@@ -30,5 +30,11 @@ namespace new_cms.Application.Interfaces
 
         /// Belirtilen ID'ye sahip menü öğesini ve tüm alt öğelerini (hiyerarşik olarak) pasif hale getirir (soft delete).
         Task DeleteMenuAsync(int id);
+
+        /// Sistemdeki tüm menüleri listeler.
+        Task<IEnumerable<MenuListDto>> GetAllMenusAsync();
+
+        /// Belirtilen üst menüye ait alt menüleri listeler.
+        Task<IEnumerable<MenuListDto>> GetMenusByParentIdAsync(int parentId);
     }
 } 

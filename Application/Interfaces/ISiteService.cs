@@ -21,9 +21,6 @@ namespace new_cms.Application.Interfaces
         // Siteyi soft delete yapar
         Task DeleteSiteAsync(int id);
         
-        // Site şablonlarını listeler (template olarak işaretlenmiş siteler)
-        Task<IEnumerable<SiteListDto>> GetSiteTemplatesAsync();
-        
         // Alan adına göre site getirir
         Task<SiteDetailDto?> GetSiteByDomainAsync(string domain);
         
@@ -37,10 +34,13 @@ namespace new_cms.Application.Interfaces
             string? searchTerm = null,
             string? sortBy = null,
             bool ascending = true);
-            
 
-        /// Belirli bir şablonu (template) kullanan aktif siteleri listeler.
-        Task<IEnumerable<SiteListDto>> GetSitesByTemplateAsync(int templateId);
+        // Belirtilen bir şablonu kullanarak yeni bir site oluşturur ve şablon içeriğini kopyalar.
+        // siteDto: Kaynak şablon ID'sini (TemplateId alanı üzerinden) ve 
+        //          oluşturulacak yeni siteye ait temel bilgileri içeren DTO.
+        //          Bu DTO'daki IsTemplate alanı 0 olmalıdır.
+        // Döner: Oluşturulan yeni sitenin detaylarını içeren SiteDetailDto.
+        Task<SiteDetailDto> CreateSiteFromTemplateAsync(SiteDto siteDto);
 
         /// Belirtilen ID'ye sahip siteyi yayına alır.
         Task PublishSiteAsync(int siteId);

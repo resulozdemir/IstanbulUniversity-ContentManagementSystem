@@ -20,6 +20,35 @@ namespace new_cms.WebApi.Controllers
             _componentService = componentService;
         }
 
+        /// Belirtilen ID'ye sahip bileşeni getirir.
+        /// <response code="200">Bileşen başarıyla döndürüldü.</response>
+        /// <response code="404">Belirtilen ID'ye sahip bileşen bulunamadı.</response>
+        /// <response code="500">Bileşen getirilirken sunucu hatası oluştu.</response>
+        [HttpGet("{id}")] // GET /api/components/5
+        [ProducesResponseType(typeof(ComponentDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<ComponentDto>> GetComponentById(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Geçerli bir bileşen ID'si gereklidir.");
+            }
+
+            try
+            {
+                var component = await _componentService.GetComponentByIdAsync(id);
+                if (component == null)
+                {
+                    return NotFound($"ID'si {id} olan bileşen bulunamadı.");
+                }
+                return Ok(component);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Bileşen getirilirken bir hata oluştu (ID: {id}): {ex.Message}");
+            }
+        }
 
         /// Bir bileşeni belirli bir temaya ekler (ilişkilendirir).
         /// <response code="201">İlişki başarıyla oluşturuldu.</response>

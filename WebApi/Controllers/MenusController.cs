@@ -18,6 +18,50 @@ namespace new_cms.WebApi.Controllers
             _menuService = menuService;
         }
 
+        /// Sistemdeki tüm menüleri listeler.
+        /// <response code="200">Tüm menüler başarıyla döndürüldü.</response>
+        /// <response code="500">Menüler listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("all")] // GET /api/menus/all
+        [ProducesResponseType(typeof(IEnumerable<MenuListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<MenuListDto>>> GetAllMenus()
+        {
+            try
+            {
+                var allMenus = await _menuService.GetAllMenusAsync();
+                return Ok(allMenus);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Tüm menüler listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
+
+        /// Belirtilen üst menüye ait alt menüleri listeler.
+        /// <response code="200">Alt menüler başarıyla döndürüldü.</response>
+        /// <response code="400">Geçersiz üst menü ID'si.</response>
+        /// <response code="500">Alt menüler listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("parent/{parentId}")] // GET /api/menus/parent/5
+        [ProducesResponseType(typeof(IEnumerable<MenuListDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<MenuListDto>>> GetMenusByParentId(int parentId)
+        {
+            if (parentId <= 0)
+            {
+                return BadRequest("Geçerli bir üst menü ID'si gereklidir.");
+            }
+
+            try
+            {
+                var childMenus = await _menuService.GetMenusByParentIdAsync(parentId);
+                return Ok(childMenus);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Alt menüler listelenirken bir hata oluştu (Üst menü ID: {parentId}): {ex.Message}");
+            }
+        }
 
         /// Belirtilen siteye ait en üst seviyedeki aktif menüleri listeler.
         /// <response code="200">Menü listesi başarıyla döndürüldü.</response>

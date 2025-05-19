@@ -209,5 +209,63 @@ namespace new_cms.Application.Services
                 throw new InvalidOperationException($"Haber silinirken bir hata oluştu (ID: {id}).", ex);
             }
         }
+
+        /// Sistemdeki tüm haberleri listeler.
+        public async Task<IEnumerable<NewsListDto>> GetAllNewsAsync()
+        {
+            try
+            {
+                var allNews = await _unitOfWork.Repository<TAppNews>().Query()
+                    .OrderByDescending(n => n.Ondate)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<NewsListDto>>(allNews);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Tüm haberler listelenirken bir hata oluştu.", ex);
+            }
+        }
+
+        /// Belirtilen siteye ait haberleri listeler.
+        public async Task<IEnumerable<NewsListDto>> GetNewsBySiteIdAsync(int siteId)
+        {
+            if (siteId <= 0)
+            {
+                throw new ArgumentException("Geçerli bir Site ID'si gereklidir.", nameof(siteId));
+            }
+
+            try
+            {
+                var siteNews = await _unitOfWork.Repository<TAppNews>().Query()
+                    .Where(n => n.Siteid == siteId)
+                    .OrderByDescending(n => n.Ondate)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<NewsListDto>>(siteNews);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Site haberleri listelenirken hata oluştu (Site ID: {siteId}).", ex);
+            }
+        }
+
+        /// Sistemdeki tüm aktif haberleri listeler.
+        public async Task<IEnumerable<NewsListDto>> GetActiveNewsAsync()
+        {
+            try
+            {
+                var activeNews = await _unitOfWork.Repository<TAppNews>().Query()
+                    .Where(n => n.Isdeleted == 0)
+                    .OrderByDescending(n => n.Ondate)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<NewsListDto>>(activeNews);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Aktif haberler listelenirken bir hata oluştu.", ex);
+            }
+        }
     }
 } 

@@ -58,6 +58,69 @@ namespace new_cms.WebApi.Controllers
             }
         }
 
+        /// Belirtilen siteye ait tüm etkinlikleri listeler.
+        /// <response code="200">Site etkinlikleri başarıyla döndürüldü.</response>
+        /// <response code="400">Geçersiz site ID'si.</response>
+        /// <response code="500">Site etkinlikleri listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("site/{siteId}")] // GET /api/events/site/2
+        [ProducesResponseType(typeof(IEnumerable<EventListDto>), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<EventListDto>>> GetEventsBySiteId(int siteId)
+        {
+            if (siteId <= 0)
+            {
+                return BadRequest("Geçerli bir site ID'si gereklidir.");
+            }
+
+            try
+            {
+                var siteEvents = await _eventService.GetEventsBySiteIdAsync(siteId);
+                return Ok(siteEvents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Site etkinlikleri listelenirken bir hata oluştu (Site ID: {siteId}): {ex.Message}");
+            }
+        }
+
+        /// Sistemdeki tüm aktif etkinlikleri listeler.
+        /// <response code="200">Aktif etkinlikler başarıyla döndürüldü.</response>
+        /// <response code="500">Aktif etkinlikler listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("active")] // GET /api/events/active
+        [ProducesResponseType(typeof(IEnumerable<EventListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<EventListDto>>> GetActiveEvents()
+        {
+            try
+            {
+                var activeEvents = await _eventService.GetActiveEventsAsync();
+                return Ok(activeEvents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Aktif etkinlikler listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
+
+        /// Sistemdeki yayınlanmış tüm etkinlikleri listeler.
+        /// <response code="200">Yayınlanmış etkinlikler başarıyla döndürüldü.</response>
+        /// <response code="500">Yayınlanmış etkinlikler listelenirken sunucu hatası oluştu.</response>
+        [HttpGet("published")] // GET /api/events/published
+        [ProducesResponseType(typeof(IEnumerable<EventListDto>), 200)]
+        [ProducesResponseType(500)]
+        public async Task<ActionResult<IEnumerable<EventListDto>>> GetPublishedEvents()
+        {
+            try
+            {
+                var publishedEvents = await _eventService.GetPublishedEventsAsync();
+                return Ok(publishedEvents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Yayınlanmış etkinlikler listelenirken bir hata oluştu: {ex.Message}");
+            }
+        }
 
         /// Belirtilen ID'ye sahip aktif etkinliği getirir.
         /// <response code="200">Etkinlik başarıyla döndürüldü.</response>

@@ -279,5 +279,40 @@ namespace new_cms.Application.Services
                 throw new InvalidOperationException($"Sayfa silinirken bir hata oluştu (ID: {id}).", ex);
             }
         }
+
+        /// Sistemdeki tüm sayfaları listeler.
+        public async Task<IEnumerable<PageListDto>> GetAllPagesAsync()
+        {
+            try
+            {
+                var pages = await _unitOfWork.Repository<TAppSitepage>().Query()
+                    .OrderBy(p => p.Id)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<PageListDto>>(pages);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Tüm sayfalar listelenirken bir hata oluştu.", ex);
+            }
+        }
+
+        /// Sistemdeki tüm aktif sayfaları listeler.
+        public async Task<IEnumerable<PageListDto>> GetActivePagesAsync()
+        {
+            try
+            {
+                var activePages = await _unitOfWork.Repository<TAppSitepage>().Query()
+                    .Where(p => p.Isdeleted == 0)
+                    .OrderBy(p => p.Id)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<PageListDto>>(activePages);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Aktif sayfalar listelenirken bir hata oluştu.", ex);
+            }
+        }
     }
 } 

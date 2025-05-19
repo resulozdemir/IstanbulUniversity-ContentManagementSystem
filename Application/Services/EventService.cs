@@ -206,5 +206,64 @@ namespace new_cms.Application.Services
                 throw new InvalidOperationException($"Etkinlik silinirken bir hata oluştu (ID: {id}).", ex);
             }
         }
+
+        /// Belirtilen siteye ait etkinlikleri listeler.
+        public async Task<IEnumerable<EventListDto>> GetEventsBySiteIdAsync(int siteId)
+        {
+            if (siteId <= 0)
+            {
+                throw new ArgumentException("Geçerli bir Site ID'si gereklidir.", nameof(siteId));
+            }
+
+            try
+            {
+                var siteEvents = await _unitOfWork.Repository<TAppEvent>().Query()
+                    .Where(e => e.Siteid == siteId && e.Isdeleted == 0)
+                    .OrderByDescending(e => e.Ondate)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<EventListDto>>(siteEvents);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Site etkinlikleri listelenirken hata oluştu (Site ID: {siteId}).", ex);
+            }
+        }
+
+        /// Sistemdeki tüm aktif etkinlikleri listeler.
+        public async Task<IEnumerable<EventListDto>> GetActiveEventsAsync()
+        {
+            try
+            {
+                var activeEvents = await _unitOfWork.Repository<TAppEvent>().Query()
+                    .Where(e => e.Isdeleted == 0)
+                    .OrderByDescending(e => e.Ondate)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<EventListDto>>(activeEvents);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Aktif etkinlikler listelenirken bir hata oluştu.", ex);
+            }
+        }
+
+        /// Yayınlanmış etkinlikleri listeler.
+        public async Task<IEnumerable<EventListDto>> GetPublishedEventsAsync()
+        {
+            try
+            {
+                var publishedEvents = await _unitOfWork.Repository<TAppEvent>().Query()
+                    .Where(e => e.Isdeleted == 0 && e.Ispublish == 1)
+                    .OrderByDescending(e => e.Ondate)
+                    .ToListAsync();
+                    
+                return _mapper.Map<IEnumerable<EventListDto>>(publishedEvents);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Yayınlanan etkinlikler listelenirken bir hata oluştu.", ex);
+            }
+        }
     }
 } 
