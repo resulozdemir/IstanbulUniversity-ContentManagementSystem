@@ -153,27 +153,6 @@ namespace new_cms.WebApi.Controllers
         }
 
 
-        /// Tüm aktif site şablonlarını (template) listeler.
-        /// <response code="200">Şablon listesi başarıyla döndürüldü.</response>
-        /// <response code="500">Şablonlar listelenirken sunucu hatası oluştu.</response>
-        [HttpGet("templates")] // GET /api/sites/templates
-        [ProducesResponseType(typeof(IEnumerable<SiteListDto>), 200)]
-        [ProducesResponseType(500)]
-        public async Task<ActionResult<IEnumerable<SiteListDto>>> GetSiteTemplates()
-        {
-             try
-            {
-                // ISiteService'de GetSiteTemplatesAsync metodu henüz implement edilmediği için boş liste dönüyoruz
-                var templates = await Task.FromResult(new List<SiteListDto>());
-                return Ok(templates);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Site şablonları listelenirken bir hata oluştu: {ex.Message}");
-            }
-        }
-
-
         /// Yeni bir site oluşturur (ve varsayılan alan adını kaydeder).
         /// <response code="201">Site başarıyla oluşturuldu.</response>
         /// <response code="400">Geçersiz site verisi gönderildi (örn: eksik Domain).</response>
