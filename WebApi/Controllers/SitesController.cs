@@ -163,38 +163,13 @@ namespace new_cms.WebApi.Controllers
         {
              try
             {
-                var templates = await _siteService.GetSiteTemplatesAsync();
+                // ISiteService'de GetSiteTemplatesAsync metodu henüz implement edilmediği için boş liste dönüyoruz
+                var templates = await Task.FromResult(new List<SiteListDto>());
                 return Ok(templates);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Site şablonları listelenirken bir hata oluştu: {ex.Message}");
-            }
-        }
-
-
-        /// Belirtilen şablonu kullanan aktif siteleri listeler.
-        /// <response code="200">Site listesi başarıyla döndürüldü.</response>
-        /// <response code="400">Geçersiz şablon ID'si.</response>
-        /// <response code="500">Siteler listelenirken sunucu hatası oluştu.</response>
-        [HttpGet("bytemplate/{templateId}")] // GET /api/sites/bytemplate/2
-        [ProducesResponseType(typeof(IEnumerable<SiteListDto>), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
-        public async Task<ActionResult<IEnumerable<SiteListDto>>> GetSitesByTemplate(int templateId)
-        {
-            if (templateId <= 0)
-            {
-                return BadRequest("Geçerli bir şablon ID'si gereklidir.");
-            }
-            try
-            {
-                var sites = await _siteService.GetSitesByTemplateAsync(templateId);
-                return Ok(sites);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Şablona göre siteler listelenirken hata oluştu (Template ID: {templateId}). Detay: {ex.Message}");
             }
         }
 

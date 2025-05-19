@@ -33,7 +33,7 @@ namespace new_cms.WebApi.Controllers
                 var themes = await _themeService.GetAllThemesAsync();
                 return Ok(themes);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Temaları alırken sunucu hatası oluştu.");
             }
@@ -59,7 +59,7 @@ namespace new_cms.WebApi.Controllers
                 }
                 return Ok(theme);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Tema getirilirken bir hata oluştu (ID: {id}).");
             }
@@ -91,7 +91,7 @@ namespace new_cms.WebApi.Controllers
             {
                  return StatusCode(500, $"Tema oluşturulurken bir hata oluştu: {ex.Message}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Tema oluşturulurken beklenmedik bir sunucu hatası oluştu.");
             }
@@ -137,7 +137,7 @@ namespace new_cms.WebApi.Controllers
             {
                  return StatusCode(500, $"Tema güncellenirken bir hata oluştu: {ex.Message}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Tema güncellenirken beklenmedik bir sunucu hatası oluştu (ID: {id}).");
             }
@@ -167,7 +167,7 @@ namespace new_cms.WebApi.Controllers
             {
                 return StatusCode(500, $"Tema silinirken bir hata oluştu: {ex.Message}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Tema silinirken beklenmedik bir sunucu hatası oluştu (ID: {id}).");
             }

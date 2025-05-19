@@ -83,7 +83,7 @@ namespace new_cms.WebApi.Controllers
                 var menus = await _menuService.GetMenusBySiteIdAsync(siteId);
                 return Ok(menus);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Siteye ait menüler listelenirken hata oluştu (Site ID: {siteId}).");
             }
@@ -109,7 +109,7 @@ namespace new_cms.WebApi.Controllers
                 }
                 return Ok(menuTree);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Menü ağacı getirilirken hata oluştu (ID: {id}).");
             }
@@ -135,7 +135,7 @@ namespace new_cms.WebApi.Controllers
                 var menuTree = await _menuService.GetMenuTreeBySiteIdAsync(siteId);
                 return Ok(menuTree);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Site için menü ağacı getirilirken hata oluştu (Site ID: {siteId}).");
             }
@@ -171,7 +171,7 @@ namespace new_cms.WebApi.Controllers
             {
                  return StatusCode(500, $"Menü oluşturulurken bir hata oluştu: {ex.Message}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Menü oluşturulurken beklenmedik bir sunucu hatası oluştu.");
             }
@@ -217,7 +217,7 @@ namespace new_cms.WebApi.Controllers
             {
                  return StatusCode(500, $"Menü güncellenirken bir hata oluştu: {ex.Message}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Menü güncellenirken beklenmedik bir sunucu hatası oluştu (ID: {id}).");
             }
@@ -247,7 +247,7 @@ namespace new_cms.WebApi.Controllers
             {
                 return StatusCode(500, $"Menü silinirken bir hata oluştu: {ex.Message}");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Menü silinirken beklenmedik bir sunucu hatası oluştu (ID: {id}).");
             }

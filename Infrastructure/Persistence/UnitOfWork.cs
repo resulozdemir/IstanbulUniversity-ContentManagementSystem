@@ -23,6 +23,7 @@ namespace new_cms.Infrastructure.Persistence
         public UnitOfWork(UCmsContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _repositories = new Hashtable();
         }
 
 
@@ -32,9 +33,6 @@ namespace new_cms.Infrastructure.Persistence
         /// <returns>Entity tipi için IRepository örneği.
         public IRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
-            if (_repositories == null)
-                _repositories = new Hashtable();
-
             var type = typeof(TEntity).Name;
 
             if (!_repositories.ContainsKey(type))
@@ -42,10 +40,14 @@ namespace new_cms.Infrastructure.Persistence
                 var repositoryType = typeof(BaseRepository<>);
                 var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
 
-                _repositories.Add(type, repositoryInstance);
+                if (repositoryInstance != null)
+                {
+                    _repositories.Add(type, repositoryInstance);
+                }
             }
 
-            return (IRepository<TEntity>)_repositories[type];
+            return (IRepository<TEntity>)(_repositories[type] ?? 
+                throw new InvalidOperationException($"Repository oluşturulamadı: {type}"));
         }
 
 

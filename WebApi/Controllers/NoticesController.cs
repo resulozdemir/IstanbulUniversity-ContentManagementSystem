@@ -132,11 +132,11 @@ namespace new_cms.WebApi.Controllers
         [ProducesResponseType(500)]
         public async Task<ActionResult<NoticeDto>> UpdateNotice(int id, [FromBody] NoticeDto noticeDto)
         {
-             if (noticeDto.Id == null) noticeDto.Id = id;
-             else if (id != noticeDto.Id)
-             {
-                  return BadRequest("URL'deki ID ile gönderilen duyuru ID'si uyuşmuyor.");
-             }
+            if (noticeDto.Id == 0) noticeDto.Id = id;
+            else if (id != noticeDto.Id)
+            {
+                return BadRequest("URL'deki ID ile gönderilen duyuru ID'si uyuşmuyor.");
+            }
 
             if (!ModelState.IsValid)
             {

@@ -240,7 +240,7 @@ namespace new_cms.Application.Services
             foreach (var menuId in oldToNewMenuIds.Values)
             {
                 var menu = await _unitOfWork.Repository<TAppMenu>().GetByIdAsync(menuId);
-                if (menu.Parentid.HasValue && menu.Parentid.Value > 0)
+                if (menu != null && menu.Parentid.HasValue && menu.Parentid.Value > 0)
                 {
                     // Eski parent ID'si yeni ID ile değiştir
                     if (oldToNewMenuIds.TryGetValue(menu.Parentid.Value, out var newParentId))

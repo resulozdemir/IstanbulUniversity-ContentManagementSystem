@@ -33,7 +33,7 @@ namespace new_cms.WebApi.Controllers
                 var templates = await _templateService.GetAllTemplatesAsync();
                 return Ok(templates);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Şablonları alırken sunucu hatası oluştu.");
             }
@@ -58,7 +58,7 @@ namespace new_cms.WebApi.Controllers
                 }
                 return Ok(template);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Şablon getirilirken bir hata oluştu (ID: {id}).");
             }
@@ -89,7 +89,7 @@ namespace new_cms.WebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Şablon oluşturulurken beklenmedik bir sunucu hatası oluştu.");
             }
@@ -126,7 +126,7 @@ namespace new_cms.WebApi.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Şablon güncellenirken beklenmedik bir sunucu hatası oluştu (ID: {id}).");
             }
@@ -155,7 +155,7 @@ namespace new_cms.WebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Şablon silinirken beklenmedik bir sunucu hatası oluştu (ID: {id}).");
             }
@@ -176,7 +176,7 @@ namespace new_cms.WebApi.Controllers
                 var sites = await _templateService.GetSitesByTemplateAsync(id);
                 return Ok(sites);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Şablonu kullanan siteler listelenirken bir hata oluştu (Şablon ID: {id}).");
             }
@@ -203,7 +203,7 @@ namespace new_cms.WebApi.Controllers
             {
                 return NotFound(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, $"Şablon içeriği siteye kopyalanırken beklenmedik bir hata oluştu.");
             }

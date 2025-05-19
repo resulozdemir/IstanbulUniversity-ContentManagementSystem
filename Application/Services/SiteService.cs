@@ -77,7 +77,7 @@ namespace new_cms.Application.Services
                     var theme = await _unitOfWork.Repository<TAppTheme>().GetByIdAsync(site.Themeid);
                     if (theme != null && theme.Isdeleted == 0)
                     {
-                        siteDto.ThemeName = theme.Name;
+                        siteDto.ThemeName = theme.Name ?? string.Empty;
                     }
                 }
 
@@ -140,7 +140,7 @@ namespace new_cms.Application.Services
         /// Mevcut bir sitenin bilgilerini günceller.
         public async Task<SiteDto> UpdateSiteAsync(SiteDto siteDto)
         {
-            if (siteDto.Id <= 0)
+            if (siteDto.Id == null || siteDto.Id.Value <= 0)
                 throw new ArgumentException("Güncelleme için geçerli bir Site ID gereklidir.", nameof(siteDto.Id));
 
             try
