@@ -16,6 +16,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS politikası ekleniyor
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", 
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 // AutoMapper yapılandırması
 Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddAutoMapper(
     builder.Services, 
@@ -28,6 +40,7 @@ builder.Services.AddDbContext<UCmsContext>(options =>
 builder.Services.AddScoped<ISiteService, SiteService>();
 builder.Services.AddScoped<ISiteDomainService, SiteDomainService>();
 builder.Services.AddScoped<IThemeService, ThemeService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IComponentService, ComponentService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<INewsService, NewsService>();
@@ -47,6 +60,9 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
+
+// CORS middleware'i etkinleştiriliyor
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
