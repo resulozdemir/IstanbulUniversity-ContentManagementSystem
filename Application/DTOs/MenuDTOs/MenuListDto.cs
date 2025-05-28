@@ -6,13 +6,13 @@ namespace new_cms.Application.DTOs.MenuDTOs
     public class MenuListDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; }
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
         public int SiteId { get; set; }
-        public string SiteName { get; set; }
+        public string? SiteName { get; set; }
         public bool IsActive { get; set; }
-        public string MenuType { get; set; }
-        public string Culture { get; set; }
+        public string? MenuType { get; set; }
+        public string? Culture { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int ItemCount { get; set; }
         public int? ParentId { get; set; }

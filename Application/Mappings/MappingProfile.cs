@@ -151,8 +151,8 @@ namespace new_cms.Application.Mappings
             CreateMap<TAppMenu, MenuTreeDto>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Link))
-                .ForMember(dest => dest.SortOrder, opt => opt.MapFrom(src => src.Menuorder))
-                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Status == 1))
+                .ForMember(dest => dest.DisplayOrder, opt => opt.MapFrom(src => src.Menuorder))
+                .ForMember(dest => dest.IsVisible, opt => opt.MapFrom(src => src.Status == 1))
                 .ForMember(dest => dest.Icon, opt => opt.MapFrom(src => src.Icon))
                 .ForMember(dest => dest.Target, opt => opt.MapFrom(src => src.Target))
                 .ForMember(dest => dest.Children, opt => opt.Ignore());
