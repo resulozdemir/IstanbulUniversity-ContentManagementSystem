@@ -249,14 +249,25 @@ public partial class UCmsContext : DbContext
         modelBuilder.Entity<TAppSitecomponentdata>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("T_APP_SITECOMPONENTDATA_PK");
+            entity.ToTable("T_APP_SITECOMPONENTDATA");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
 
+            entity.Property(e => e.Siteid).HasColumnName("SITEID");
+            entity.Property(e => e.Themecomponentid).HasColumnName("THEMECOMPONENTID");
+            entity.Property(e => e.Createddate).HasColumnName("CREATEDDATE");
+            entity.Property(e => e.Createduser).HasColumnName("CREATEDUSER");
+            entity.Property(e => e.Modifieddate).HasColumnName("MODIFIEDDATE");
+            entity.Property(e => e.Modifieduser).HasColumnName("MODIFIEDUSER");
+            entity.Property(e => e.Isdeleted).HasColumnName("ISDELETED");
+
             entity.HasOne(d => d.Site).WithMany(p => p.TAppSitecomponentdata)
+                .HasForeignKey(d => d.Siteid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SITECOMPONENTDATA_SITE");
 
             entity.HasOne(d => d.Themecomponent).WithMany(p => p.TAppSitecomponentdata)
+                .HasForeignKey(d => d.Themecomponentid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SITECOMPONENTDATA_THEMECOMPONENT");
         });
