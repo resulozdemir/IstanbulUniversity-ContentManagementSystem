@@ -50,7 +50,15 @@ namespace new_cms.Application.Mappings
                 .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
             
             // Component Mappings
-            CreateMap<TAppComponent, ComponentDto>().ReverseMap();
+            CreateMap<TAppComponent, ComponentDto>()
+                .ForMember(dest => dest.TagName, opt => opt.MapFrom(src => src.Tagname))
+                .ReverseMap()
+                .ForMember(dest => dest.Tagname, opt => opt.MapFrom(src => src.TagName))
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
             
             CreateMap<TAppSitecomponentdata, SiteComponentDataDto>()
                 .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) 

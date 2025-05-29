@@ -266,5 +266,176 @@ namespace new_cms.Application.Services
                 throw new InvalidOperationException($"Bileşen getirilirken bir hata oluştu (ID: {id}).", ex);
             }
         }
+
+        /// Yeni bir bileşen oluşturur.
+        public async Task<ComponentDto> CreateComponentAsync(ComponentDto componentDto)
+        {
+            if (componentDto == null)
+                throw new ArgumentNullException(nameof(componentDto));
+            if (string.IsNullOrWhiteSpace(componentDto.Name))
+                throw new ArgumentException("Bileşen adı gereklidir.", nameof(componentDto.Name));
+
+            try
+            {
+                // Aynı isimde aktif bileşen var mı kontrol et
+                bool exists = await _unitOfWork.Repository<TAppComponent>().AnyAsync(c =>
+                    c.Name == componentDto.Name && c.IsDeleted == 0);
+
+                if (exists)
+                {
+                    throw new InvalidOperationException("Bu isimde bir bileşen zaten mevcut ve aktif durumdadır.");
+                }
+
+                var componentEntity = _mapper.Map<TAppComponent>(componentDto);
+                componentEntity.IsDeleted = 0;
+                componentEntity.Createddate = DateTime.UtcNow;
+                // componentEntity.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı
+
+                var addedEntity = await _unitOfWork.Repository<TAppComponent>().AddAsync(componentEntity);
+                await _unitOfWork.CompleteAsync();
+
+                return _mapper.Map<ComponentDto>(addedEntity);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException("Bileşen oluşturulurken veritabanı hatası oluştu.", ex);
+            }
+            catch (Exception ex)
+            {
+                if (ex is InvalidOperationException || ex is ArgumentException) throw;
+                throw new InvalidOperationException("Bileşen oluşturulurken beklenmedik bir hata oluştu.", ex);
+            }
+        }
+
+        /// Mevcut bir bileşeni günceller.
+        public async Task<ComponentDto> UpdateComponentAsync(ComponentDto componentDto)
+        {
+            if (componentDto == null)
+                throw new ArgumentNullException(nameof(componentDto));
+            if (componentDto.Id == null || componentDto.Id <= 0)
+                throw new ArgumentException("Güncelleme için geçerli bir ID gereklidir.", nameof(componentDto.Id));
+            if (string.IsNullOrWhiteSpace(componentDto.Name))
+                throw new ArgumentException("Bileşen adı gereklidir.", nameof(componentDto.Name));
+
+            var componentId = componentDto.Id.Value;
+
+            try
+            {
+                var existingComponent = await _unitOfWork.Repository<TAppComponent>().GetByIdAsync(componentId);
+
+                if (existingComponent == null || existingComponent.IsDeleted == 1)
+                    throw new KeyNotFoundException($"Güncellenecek bileşen bulunamadı veya silinmiş: ID {componentId}");
+
+                // Aynı isimde başka aktif bileşen var mı kontrol et (kendisi hariç)
+                bool exists = await _unitOfWork.Repository<TAppComponent>().AnyAsync(c =>
+                    c.Name == componentDto.Name && c.IsDeleted == 0 && c.Id != componentId);
+
+                if (exists)
+                {
+                    throw new InvalidOperationException("Bu isimde başka bir aktif bileşen mevcut.");
+                }
+
+                // Orijinal değerleri sakla
+                var originalIsDeleted = existingComponent.IsDeleted;
+                var originalCreatedDate = existingComponent.Createddate;
+                var originalCreatedUser = existingComponent.Createduser;
+
+                // DTO'dan entity'ye map et
+                _mapper.Map(componentDto, existingComponent);
+
+                // Orijinal değerleri geri yükle
+                existingComponent.IsDeleted = originalIsDeleted;
+                existingComponent.Createddate = originalCreatedDate;
+                existingComponent.Createduser = originalCreatedUser;
+                existingComponent.Modifieddate = DateTime.UtcNow;
+                // existingComponent.Modifieduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı
+
+                await _unitOfWork.Repository<TAppComponent>().UpdateAsync(existingComponent);
+                await _unitOfWork.CompleteAsync();
+
+                return _mapper.Map<ComponentDto>(existingComponent);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new InvalidOperationException($"Bileşen güncellenirken veritabanı hatası oluştu (ID: {componentId}).", ex);
+            }
+            catch (Exception ex)
+            {
+                if (ex is KeyNotFoundException || ex is InvalidOperationException || ex is ArgumentException) throw;
+                throw new InvalidOperationException($"Bileşen güncellenirken beklenmedik bir hata oluştu (ID: {componentId}).", ex);
+            }
+        }
+
+        /// Belirtilen ID'ye sahip bileşeni pasif hale getirir (soft delete).
+        public async Task DeleteComponentAsync(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentException("Geçerli bir bileşen ID'si gereklidir.", nameof(id));
+
+            try
+            {
+                await _unitOfWork.Repository<TAppComponent>().SoftDeleteAsync(id);
+                await _unitOfWork.CompleteAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Bileşen silinirken bir hata oluştu (ID: {id}).", ex);
+            }
+        }
+
+        /// Tüm aktif bileşenleri listeler.
+        public async Task<IEnumerable<ComponentDto>> GetAllComponentsAsync()
+        {
+            try
+            {
+                var components = await _unitOfWork.Repository<TAppComponent>().Query()
+                    .Where(c => c.IsDeleted == 0)
+                    .ToListAsync();
+
+                return _mapper.Map<IEnumerable<ComponentDto>>(components);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Bileşenler listelenirken bir hata oluştu.", ex);
+            }
+        }
+
+        /// Tüm aktif tema-bileşen ilişkilerini listeler.
+        public async Task<IEnumerable<ThemeComponentDto>> GetAllThemeComponentsAsync()
+        {
+            try
+            {
+                var themeComponents = await _unitOfWork.Repository<TAppThemecomponent>().Query()
+                    .Where(tc => tc.Isdeleted == 0)
+                    .OrderBy(tc => tc.Themeid)
+                    .ThenBy(tc => tc.Componentid)
+                    .ToListAsync();
+
+                return _mapper.Map<IEnumerable<ThemeComponentDto>>(themeComponents);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Tema-bileşen ilişkileri listelenirken bir hata oluştu.", ex);
+            }
+        }
+
+        /// Belirtilen ID'ye sahip tema-bileşen ilişkisini getirir.
+        public async Task<ThemeComponentDto?> GetThemeComponentByIdAsync(int themeComponentId)
+        {
+            if (themeComponentId <= 0)
+                throw new ArgumentException("Geçerli bir tema-bileşen ID'si gereklidir.", nameof(themeComponentId));
+
+            try
+            {
+                var themeComponent = await _unitOfWork.Repository<TAppThemecomponent>().Query()
+                    .FirstOrDefaultAsync(tc => tc.Id == themeComponentId && tc.Isdeleted == 0);
+
+                return themeComponent == null ? null : _mapper.Map<ThemeComponentDto>(themeComponent);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Tema-bileşen ilişkisi getirilirken bir hata oluştu (ID: {themeComponentId}).", ex);
+            }
+        }
     }
 } 
