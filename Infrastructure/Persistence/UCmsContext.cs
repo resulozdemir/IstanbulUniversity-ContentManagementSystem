@@ -118,7 +118,14 @@ public partial class UCmsContext : DbContext
     public virtual DbSet<VAppViewcount> VAppViewcounts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
-        => optionsBuilder.UseSqlServer("Server=RESULOZDEMIR;Database=U_CMS;Trusted_Connection=True;TrustServerCertificate=True;");
+    {
+        // Only configure the connection if it hasn't been configured already
+        if (!optionsBuilder.IsConfigured)
+        {
+            // This will be ignored if connection string is provided via dependency injection
+            // which is the case in Program.cs
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
