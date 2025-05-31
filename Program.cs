@@ -47,6 +47,9 @@ builder.Services.AddScoped<INewsService, NewsService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<INoticeService, NoticeService>();
 builder.Services.AddScoped<IPageService, PageService>();
+builder.Services.AddScoped<IContentPageService, ContentPageService>();
+builder.Services.AddScoped<ISitemapService, SitemapService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 

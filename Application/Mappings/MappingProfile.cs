@@ -9,6 +9,9 @@ using new_cms.Application.DTOs.ThemeDTOs;
 using new_cms.Application.DTOs.ComponentDTOs;
 using new_cms.Application.DTOs.PageDTOs;
 using new_cms.Application.DTOs.TemplateDTOs;
+using new_cms.Application.DTOs.ContentPageDTOs;
+using new_cms.Application.DTOs.SitemapDTOs;
+using new_cms.Application.DTOs.UploadDTOs;
 
 namespace new_cms.Application.Mappings
 {
@@ -63,6 +66,60 @@ namespace new_cms.Application.Mappings
             CreateMap<TAppSitecomponentdata, SiteComponentDataDto>()
                 .ForMember(dest => dest.ComponentName, opt => opt.Ignore()) 
                 .ReverseMap();
+            
+            // Sitemap Mappings
+            CreateMap<TAppSitemap, SitemapDto>()
+                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
+                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Itemid))
+                .ForMember(dest => dest.RedirectTo, opt => opt.MapFrom(src => src.Redirectto))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.Createduser))
+                .ForMember(dest => dest.ModifiedUser, opt => opt.MapFrom(src => src.Modifieduser))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
+                .ReverseMap()
+                .ForMember(dest => dest.Siteid, opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest => dest.Itemid, opt => opt.MapFrom(src => src.ItemId))
+                .ForMember(dest => dest.Redirectto, opt => opt.MapFrom(src => src.RedirectTo))
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
+
+            CreateMap<TAppSitemap, SitemapListDto>()
+                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
+                .ForMember(dest => dest.ItemId, opt => opt.MapFrom(src => src.Itemid))
+                .ForMember(dest => dest.RedirectTo, opt => opt.MapFrom(src => src.Redirectto))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.Createduser))
+                .ForMember(dest => dest.ModifiedUser, opt => opt.MapFrom(src => src.Modifieduser))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted));
+                
+            // ContentPage Mappings
+            CreateMap<TAppContentpage, ContentPageDto>()
+                .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.Groupid))
+                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
+                .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => src.Orderby))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.Createduser))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
+                .ForMember(dest => dest.ModifiedUser, opt => opt.MapFrom(src => src.Modifieduser))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted))
+                .ReverseMap()
+                .ForMember(dest => dest.Groupid, opt => opt.MapFrom(src => src.GroupId))
+                .ForMember(dest => dest.Siteid, opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest => dest.Orderby, opt => opt.MapFrom(src => src.OrderBy))
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
+
+            CreateMap<TAppContentpage, ContentPageListDto>()
+                .ForMember(dest => dest.GroupId, opt => opt.MapFrom(src => src.Groupid))
+                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
+                .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => src.Orderby))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted));
             
             // News Mappings
             CreateMap<TAppNews, NewsDto>()
@@ -164,6 +221,77 @@ namespace new_cms.Application.Mappings
                 .ForMember(dest => dest.Icon, opt => opt.MapFrom(src => src.Icon))
                 .ForMember(dest => dest.Target, opt => opt.MapFrom(src => src.Target))
                 .ForMember(dest => dest.Children, opt => opt.Ignore());
+
+            // Upload Mappings
+            CreateMap<TAppUpload, UploadDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Userid))
+                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
+                .ForMember(dest => dest.ImageId, opt => opt.MapFrom(src => src.Imageid))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.Createduser))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
+                .ForMember(dest => dest.ModifiedUser, opt => opt.MapFrom(src => src.Modifieduser))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
+                .ReverseMap()
+                .ForMember(dest => dest.Userid, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Siteid, opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest => dest.Imageid, opt => opt.MapFrom(src => src.ImageId))
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
+
+            CreateMap<TAppUploadfile, UploadFileDto>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Userid))
+                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
+                .ForMember(dest => dest.FileId, opt => opt.MapFrom(src => src.Fileid))
+                .ForMember(dest => dest.Salt, opt => opt.MapFrom(src => src.Salt))
+                .ForMember(dest => dest.Path, opt => opt.MapFrom(src => src.Path))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
+                .ForMember(dest => dest.FileSize, opt => opt.MapFrom(src => src.Filesize))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.Filename))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.Createduser))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
+                .ForMember(dest => dest.ModifiedUser, opt => opt.MapFrom(src => src.Modifieduser))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
+                .ReverseMap()
+                .ForMember(dest => dest.Userid, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.Siteid, opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest => dest.Fileid, opt => opt.MapFrom(src => src.FileId))
+                .ForMember(dest => dest.Filesize, opt => opt.MapFrom(src => src.FileSize))
+                .ForMember(dest => dest.Filename, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
+
+            CreateMap<TAppUploadapp, UploadAppDto>()
+                .ForMember(dest => dest.Key, opt => opt.MapFrom(src => src.Key))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Path, opt => opt.MapFrom(src => src.Path))
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
+                .ForMember(dest => dest.CreatedUser, opt => opt.MapFrom(src => src.Createduser))
+                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
+                .ForMember(dest => dest.ModifiedUser, opt => opt.MapFrom(src => src.Modifieduser))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.MaxWidth, opt => opt.MapFrom(src => src.Maxwidth))
+                .ForMember(dest => dest.MaxHeight, opt => opt.MapFrom(src => src.Maxheight))
+                .ForMember(dest => dest.ThumbnailSize, opt => opt.MapFrom(src => src.Thumbnailsize))
+                .ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => src.Filepath))
+                .ReverseMap()
+                .ForMember(dest => dest.Maxwidth, opt => opt.MapFrom(src => src.MaxWidth))
+                .ForMember(dest => dest.Maxheight, opt => opt.MapFrom(src => src.MaxHeight))
+                .ForMember(dest => dest.Thumbnailsize, opt => opt.MapFrom(src => src.ThumbnailSize))
+                .ForMember(dest => dest.Filepath, opt => opt.MapFrom(src => src.FilePath))
+                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
+                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
+                .ForMember(dest => dest.Isdeleted, opt => opt.Ignore());
         }
     }
 } 
