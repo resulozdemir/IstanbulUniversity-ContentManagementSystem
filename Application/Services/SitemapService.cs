@@ -16,16 +16,13 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IIdGeneratorService _idGenerator;
 
         public SitemapService(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IIdGeneratorService idGenerator)
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _idGenerator = idGenerator;
         }
 
         /// Sayfalı ve filtrelenmiş site haritası listesi getirir
@@ -253,8 +250,6 @@ namespace new_cms.Application.Services
                 }
 
                 var sitemap = _mapper.Map<TAppSitemap>(sitemapDto);
-                
-                sitemap.Id = await _idGenerator.GenerateNextIdAsync<TAppSitemap>();
                 sitemap.Isdeleted = 0;
                 sitemap.Createddate = DateTime.UtcNow;
                 // sitemap.Createduser = GetCurrentUserId();

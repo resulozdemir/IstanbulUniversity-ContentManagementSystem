@@ -17,16 +17,13 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IIdGeneratorService _idGenerator;
 
         public ThemeService(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IIdGeneratorService idGenerator)
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _idGenerator = idGenerator;
         }
 
         /// Sistemdeki silinmemiş temaları listeler.
@@ -72,8 +69,7 @@ namespace new_cms.Application.Services
             try
             {
                 var theme = _mapper.Map<TAppTheme>(themeDto);
- 
-                theme.Id = await _idGenerator.GenerateNextIdAsync<TAppTheme>();
+
                 theme.Isdeleted = 0; 
                 theme.Createddate = DateTime.UtcNow; 
                 // theme.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı

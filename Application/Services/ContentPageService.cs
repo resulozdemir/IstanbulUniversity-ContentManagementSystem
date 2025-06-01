@@ -16,16 +16,13 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IIdGeneratorService _idGenerator;
 
         public ContentPageService(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IIdGeneratorService idGenerator)
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _idGenerator = idGenerator;
         }
 
         /// Sayfalı ve filtrelenmiş content sayfası listesi getirir
@@ -131,8 +128,6 @@ namespace new_cms.Application.Services
             try
             {
                 var contentPage = _mapper.Map<TAppContentpage>(contentPageDto);
-                 
-                contentPage.Id = await _idGenerator.GenerateNextIdAsync<TAppContentpage>();
                 contentPage.IsDeleted = 0; 
                 contentPage.Createddate = DateTime.UtcNow; 
                 // contentPage.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli

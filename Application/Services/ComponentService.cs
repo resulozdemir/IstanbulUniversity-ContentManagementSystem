@@ -17,16 +17,13 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IIdGeneratorService _idGenerator;
 
         public ComponentService(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IIdGeneratorService idGenerator)
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _idGenerator = idGenerator;
         }
 
         /// Belirtilen tema-bileşen ilişkisini pasif hale getirir (soft delete).
@@ -169,8 +166,6 @@ namespace new_cms.Application.Services
                 }
 
                 var themeComponentEntity = _mapper.Map<TAppThemecomponent>(themeComponentDto);
-                
-                themeComponentEntity.Id = await _idGenerator.GenerateNextIdAsync<TAppThemecomponent>();
                 themeComponentEntity.Isdeleted = 0; 
                 themeComponentEntity.Createddate = DateTime.UtcNow; 
                 // themeComponentEntity.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı
@@ -292,8 +287,6 @@ namespace new_cms.Application.Services
                 }
 
                 var componentEntity = _mapper.Map<TAppComponent>(componentDto);
-                 
-                componentEntity.Id = await _idGenerator.GenerateNextIdAsync<TAppComponent>();
                 componentEntity.IsDeleted = 0;
                 componentEntity.Createddate = DateTime.UtcNow;
                 // componentEntity.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si alınmalı

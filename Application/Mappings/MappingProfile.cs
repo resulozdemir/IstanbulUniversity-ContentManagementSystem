@@ -121,65 +121,6 @@ namespace new_cms.Application.Mappings
                 .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
                 .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.IsDeleted));
             
-            // Page Mappings - Eksik olan mapping'ler eklendi
-            CreateMap<TAppSitepage, PageDto>()
-                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
-                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
-                .ForMember(dest => dest.ParentId, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MetaTitle, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MetaDescription, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MetaKeywords, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.ShowInMenu, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MenuOrder, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.Layout, opt => opt.Ignore()); // Entity'de bu alan yok
-                
-            CreateMap<PageDto, TAppSitepage>()
-                .ForMember(dest => dest.Siteid, opt => opt.MapFrom(src => src.SiteId))
-                .ForMember(dest => dest.Isdeleted, opt => opt.MapFrom(src => src.IsDeleted))
-                .ForMember(dest => dest.Createddate, opt => opt.Ignore())
-                .ForMember(dest => dest.Createduser, opt => opt.Ignore())
-                .ForMember(dest => dest.Modifieddate, opt => opt.Ignore())
-                .ForMember(dest => dest.Modifieduser, opt => opt.Ignore())
-                .ForMember(dest => dest.Templateid, opt => opt.Ignore())
-                .ForMember(dest => dest.Isdefault, opt => opt.Ignore())
-                .ForMember(dest => dest.Virtualpage, opt => opt.Ignore())
-                .ForMember(dest => dest.Column3, opt => opt.Ignore())
-                .ForMember(dest => dest.Column4, opt => opt.Ignore())
-                .ForMember(dest => dest.Htmldev, opt => opt.Ignore())
-                .ForMember(dest => dest.Readonly, opt => opt.Ignore())
-                .ForMember(dest => dest.Styledev, opt => opt.Ignore())
-                .ForMember(dest => dest.Javascriptdev, opt => opt.Ignore())
-                .ForMember(dest => dest.Site, opt => opt.Ignore());
-
-            CreateMap<TAppSitepage, PageListDto>()
-                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
-                .ForMember(dest => dest.SiteName, opt => opt.Ignore()) // Join ile doldurulacak
-                .ForMember(dest => dest.ParentId, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.ParentName, opt => opt.Ignore()) // Join ile doldurulacak
-                .ForMember(dest => dest.Routing, opt => opt.MapFrom(src => src.Routing))
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
-                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
-                .ForMember(dest => dest.ShowInMenu, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MenuOrder, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.ChildCount, opt => opt.Ignore()); // Servis katmanında hesaplanacak
-
-            CreateMap<TAppSitepage, PageDetailDto>()
-                .ForMember(dest => dest.SiteId, opt => opt.MapFrom(src => src.Siteid))
-                .ForMember(dest => dest.SiteName, opt => opt.Ignore()) // Join ile doldurulacak
-                .ForMember(dest => dest.ParentId, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.ParentName, opt => opt.Ignore()) // Join ile doldurulacak
-                .ForMember(dest => dest.Routing, opt => opt.MapFrom(src => src.Routing))
-                .ForMember(dest => dest.MetaTitle, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MetaDescription, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MetaKeywords, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.Createddate))
-                .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => src.Modifieddate))
-                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => src.Isdeleted))
-                .ForMember(dest => dest.ShowInMenu, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.MenuOrder, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.Layout, opt => opt.Ignore()) // Entity'de bu alan yok
-                .ForMember(dest => dest.ChildPages, opt => opt.Ignore()); // Servis katmanında doldurulacak
-            
             // News Mappings
             CreateMap<TAppNews, NewsDto>()
                 .ForMember(dest => dest.Header, opt => opt.MapFrom(src => src.Header))

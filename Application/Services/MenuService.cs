@@ -16,17 +16,12 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IIdGeneratorService _idGenerator;
 
         /// MenuService sınıfının yeni bir örneğini başlatır.
-        public MenuService(
-            IUnitOfWork unitOfWork, 
-            IMapper mapper,
-            IIdGeneratorService idGenerator) 
+        public MenuService(IUnitOfWork unitOfWork, IMapper mapper) 
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _idGenerator = idGenerator;
         }
 
         /// Belirtilen siteye ait en üst seviyedeki (ParentId'si null olan) aktif menüleri listeler.
@@ -123,8 +118,6 @@ namespace new_cms.Application.Services
             try
             {
                 var menu = _mapper.Map<TAppMenu>(menuDto);
-                 
-                menu.Id = await _idGenerator.GenerateNextIdAsync<TAppMenu>();
                 menu.Isdeleted = 0; 
                 menu.Createddate = DateTime.UtcNow; 
                 // menu.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli

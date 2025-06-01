@@ -18,17 +18,14 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IIdGeneratorService _idGenerator;
  
         /// PageService sınıfının yeni bir örneğini başlatır.  
         public PageService(
             IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IIdGeneratorService idGenerator)
+            IMapper mapper)
         {   
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _idGenerator = idGenerator;
         }
 
         /// Sayfalı ve filtrelenmiş aktif sayfa listesini döndürür.
@@ -146,9 +143,6 @@ namespace new_cms.Application.Services
             try
             { 
                 var page = _mapper.Map<TAppSitepage>(pageDto);
-                 
-                page.Id = await _idGenerator.GenerateNextIdAsync<TAppSitepage>();
-                
                 page.Isdeleted = 0;  
                 page.Createddate = DateTime.UtcNow;  
                 // page.Createduser = GetCurrentUserId();  
