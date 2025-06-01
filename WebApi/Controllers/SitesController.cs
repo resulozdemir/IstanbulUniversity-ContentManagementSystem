@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using new_cms.Application.DTOs.Common;
+using new_cms.Domain.Entities;
 
 namespace new_cms.WebApi.Controllers
 {

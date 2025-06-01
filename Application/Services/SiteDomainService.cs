@@ -16,10 +16,16 @@ namespace new_cms.Application.Services
     { 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public SiteDomainService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IIdGeneratorService _idGenerator;
+        
+        public SiteDomainService(
+            IUnitOfWork unitOfWork, 
+            IMapper mapper,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _idGenerator = idGenerator;
         }
 
         /// Belirtilen site ID'sine ait tüm aktif alan adlarını listeler.  
@@ -57,7 +63,8 @@ namespace new_cms.Application.Services
             try
             { 
                 var domain = _mapper.Map<TAppSitedomain>(domainDto);
- 
+  
+                domain.Id = await _idGenerator.GenerateNextIdAsync<TAppSitedomain>();
                 domain.Createddate = DateTime.UtcNow;
                 domain.Isdeleted = 0; 
                 // TODO: domain.Createduser = GetCurrentUserId(); 

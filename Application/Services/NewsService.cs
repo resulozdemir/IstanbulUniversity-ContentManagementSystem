@@ -16,15 +16,18 @@ namespace new_cms.Application.Services
     /// </summary>
     public class NewsService : INewsService
     {
-        private readonly IUnitOfWork _unitOfWork;
+                private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IIdGeneratorService _idGenerator;
 
         public NewsService(
-            IUnitOfWork unitOfWork,  
-            IMapper mapper)
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _idGenerator = idGenerator;
         }
 
         /// <inheritdoc />
@@ -120,6 +123,8 @@ namespace new_cms.Application.Services
             try
             {
                 var news = _mapper.Map<TAppNews>(newsDto);
+                
+                news.Id = await _idGenerator.GenerateNextIdAsync<TAppNews>();
                 news.Isdeleted = 0; 
                 news.Createddate = DateTime.UtcNow; 
                 // news.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli

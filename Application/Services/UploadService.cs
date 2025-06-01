@@ -19,6 +19,7 @@ namespace new_cms.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IIdGeneratorService _idGenerator;
 
         // İzin verilen dosya türleri
         private readonly string[] _allowedImageTypes = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
@@ -28,11 +29,13 @@ namespace new_cms.Application.Services
         public UploadService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
+            _idGenerator = idGenerator;
         }
 
         /// Dosya yükleme işlemini gerçekleştirir
@@ -85,6 +88,8 @@ namespace new_cms.Application.Services
                     Createduser = request.UserId,
                     Isdeleted = false
                 };
+
+                uploadFile.Id = await _idGenerator.GenerateNextIdAsync<TAppUploadfile>();
 
                 var savedFile = await _unitOfWork.Repository<TAppUploadfile>().AddAsync(uploadFile);
                 await _unitOfWork.CompleteAsync();
@@ -321,6 +326,8 @@ namespace new_cms.Application.Services
             try
             {
                 var uploadApp = _mapper.Map<TAppUploadapp>(uploadAppDto);
+                
+                uploadApp.Id = await _idGenerator.GenerateNextIdAsync<TAppUploadapp>();
                 uploadApp.Isdeleted = 0;
                 uploadApp.Createddate = DateTime.UtcNow;
 

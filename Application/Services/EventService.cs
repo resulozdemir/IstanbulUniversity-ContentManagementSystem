@@ -14,15 +14,18 @@ namespace new_cms.Application.Services
     /// Etkinlik (TAppEvent) varlıkları ile ilgili işlemleri gerçekleştiren servis sınıfı.
     public class EventService : IEventService
     {
-        private readonly IUnitOfWork _unitOfWork;
+                private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IIdGeneratorService _idGenerator;
 
         public EventService(
-            IUnitOfWork unitOfWork, 
-            IMapper mapper)
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _idGenerator = idGenerator;
         }
 
         public async Task<(IEnumerable<EventListDto> Items, int TotalCount)> GetPagedEventsAsync(
@@ -118,6 +121,8 @@ namespace new_cms.Application.Services
             try
             {
                 var eventItem = _mapper.Map<TAppEvent>(eventDto);
+                 
+                eventItem.Id = await _idGenerator.GenerateNextIdAsync<TAppEvent>();
                 eventItem.Isdeleted = 0; 
                 eventItem.Createddate = DateTime.UtcNow; 
                 // eventItem.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli

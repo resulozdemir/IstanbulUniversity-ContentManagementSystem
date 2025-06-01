@@ -20,18 +20,21 @@ namespace new_cms.Application.Services
         
         private readonly IMapper _mapper;
         private readonly ITemplateService _templateService;
+        private readonly IIdGeneratorService _idGenerator;
 
         /// SiteService sınıfının yeni bir örneğini başlatır.
         public SiteService(
             IUnitOfWork unitOfWork, 
             ISiteDomainService siteDomainService,
             IMapper mapper,
-            ITemplateService templateService)
+            ITemplateService templateService,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _siteDomainService = siteDomainService;
             _mapper = mapper;
             _templateService = templateService;
+            _idGenerator = idGenerator;
         }
 
         /// Tüm aktif siteleri listeler.
@@ -104,6 +107,7 @@ namespace new_cms.Application.Services
             { 
                 var site = _mapper.Map<TAppSite>(siteDto);
  
+                site.Id = await _idGenerator.GenerateNextIdAsync<TAppSite>();
                 site.Isdeleted = 0;                      
                 site.Ispublish = 0;                  
                 site.Createddate = DateTime.UtcNow;    
@@ -316,8 +320,9 @@ namespace new_cms.Application.Services
                  throw new ArgumentException("Şablondan oluşturulan bir site, kendisi şablon olarak işaretlenemez (IsTemplate 0 olmalıdır).");
             }
 
-            var newSiteEntity = _mapper.Map<TAppSite>(siteDto);
-            newSiteEntity.Id = 0; 
+                            var newSiteEntity = _mapper.Map<TAppSite>(siteDto);
+                // ID manuel generate etmek gerekiyor çünkü ValueGeneratedNever() kullanılıyor
+                newSiteEntity.Id = await _idGenerator.GenerateNextIdAsync<TAppSite>(); 
             newSiteEntity.Istemplate = 0; 
             newSiteEntity.Isdeleted = 0;
             newSiteEntity.Createddate = DateTime.UtcNow;

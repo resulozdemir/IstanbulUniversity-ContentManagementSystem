@@ -17,14 +17,17 @@ namespace new_cms.Application.Services
         // UnitOfWork ve AutoMapper bağımlılıkları
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IIdGeneratorService _idGenerator;
  
         /// NoticeService sınıfının yeni bir örneğini başlatır. 
         public NoticeService(
             IUnitOfWork unitOfWork, 
-            IMapper mapper)
+            IMapper mapper,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _idGenerator = idGenerator;
         }
 
         /// <inheritdoc />
@@ -117,6 +120,8 @@ namespace new_cms.Application.Services
              try
             {
                 var notice = _mapper.Map<TAppNotice>(noticeDto);
+                 
+                notice.Id = await _idGenerator.GenerateNextIdAsync<TAppNotice>();
                 notice.Isdeleted = 0;
                 notice.Createddate = DateTime.UtcNow; 
                 // notice.Createduser = GetCurrentUserId(); // TODO: Aktif kullanıcı ID'si entegre edilmeli

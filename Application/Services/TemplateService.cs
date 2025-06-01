@@ -17,20 +17,24 @@ namespace new_cms.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IIdGeneratorService _idGenerator;
 
         public TemplateService(
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper,
+            IIdGeneratorService idGenerator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _idGenerator = idGenerator;
         }
 
         // Yeni bir site şablonu oluşturur.
         public async Task<TemplateDto> CreateTemplateAsync(TemplateDto templateDto)
         {
             var templateEntity = _mapper.Map<TAppSite>(templateDto);
-
+ 
+            templateEntity.Id = await _idGenerator.GenerateNextIdAsync<TAppSite>();
             templateEntity.Istemplate = 1;  
             templateEntity.Isdeleted = 0;
             templateEntity.Createddate = DateTime.UtcNow;
@@ -192,7 +196,8 @@ namespace new_cms.Application.Services
             foreach (var pageToCopy in templatePages)
             {
                 var newPage = _mapper.Map<TAppSitepage>(pageToCopy);
-                newPage.Id = 0;
+                
+                newPage.Id = await _idGenerator.GenerateNextIdAsync<TAppSitepage>();
                 newPage.Siteid = targetSiteId;
                 newPage.Createddate = DateTime.UtcNow;
                 // newPage.Createduser = GetCurrentUserId(); 
@@ -208,7 +213,9 @@ namespace new_cms.Application.Services
             foreach (var componentToCopy in templateComponents)
             {
                 var newComponent = _mapper.Map<TAppSitecomponentdata>(componentToCopy);
-                newComponent.Id = 0; 
+                
+                // ID manuel generate etmek gerekiyor çünkü ValueGeneratedNever() kullanılıyor
+                newComponent.Id = await _idGenerator.GenerateNextIdAsync<TAppSitecomponentdata>();
                 newComponent.Siteid = targetSiteId; 
                 newComponent.Createddate = DateTime.UtcNow;
                 await _unitOfWork.Repository<TAppSitecomponentdata>().AddAsync(newComponent);
@@ -225,7 +232,9 @@ namespace new_cms.Application.Services
             foreach (var menuToCopy in templateMenus)
             {
                 var newMenu = _mapper.Map<TAppMenu>(menuToCopy);
-                newMenu.Id = 0;
+                
+                // ID manuel generate etmek gerekiyor çünkü ValueGeneratedNever() kullanılıyor
+                newMenu.Id = await _idGenerator.GenerateNextIdAsync<TAppMenu>();
                 newMenu.Siteid = targetSiteId;
                 newMenu.Createddate = DateTime.UtcNow;
                 
