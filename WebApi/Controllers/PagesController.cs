@@ -163,7 +163,15 @@ namespace new_cms.WebApi.Controllers
             try
             {
                 var createdPage = await _pageService.CreatePageAsync(pageDto);
-                return CreatedAtAction(nameof(GetPageById), new { id = createdPage.Id }, createdPage);
+                
+                // Oluşturulan sayfa ID'sini kontrol et
+                if (createdPage?.Id == null)
+                {
+                    return StatusCode(500, "Sayfa oluşturuldu ancak ID alınamadı.");
+                }
+                
+                // CreatedAtAction yerine basit Created response döndür
+                return Created($"/api/pages/{createdPage.Id}", createdPage);
             }
             catch (ArgumentException ex) // Geçersiz SiteId, Name vb.
             {
