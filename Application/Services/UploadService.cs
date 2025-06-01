@@ -57,7 +57,7 @@ namespace new_cms.Application.Services
                     throw new InvalidOperationException($"Dosya boyutu çok büyük. Maksimum: {_maxFileSize / (1024 * 1024)}MB");
 
                 // Dosya yolunu oluştur
-                var uploadPath = await CreateUploadPathAsync(request.Category, request.SubFolder);
+                var uploadPath = CreateUploadPath(request.Category, request.SubFolder);
                 var fileName = GenerateUniqueFileName(request.File.FileName);
                 var fullPath = Path.Combine(uploadPath, fileName);
 
@@ -408,7 +408,7 @@ namespace new_cms.Application.Services
         }
 
         /// Upload yolunu oluşturur
-        private async Task<string> CreateUploadPathAsync(string category, string? subFolder)
+        private string CreateUploadPath(string category, string? subFolder)
         {
             var basePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", category);
             

@@ -11,9 +11,7 @@ using System.Threading.Tasks;
 
 namespace new_cms.Application.Services
 {
-    /// <summary>
     /// Haber (TAppNews) varlıkları ile ilgili işlemleri gerçekleştiren servis sınıfı.
-    /// </summary>
     public class NewsService : INewsService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -27,7 +25,6 @@ namespace new_cms.Application.Services
             _mapper = mapper;
         }
 
-        /// <inheritdoc />
         public async Task<(IEnumerable<NewsListDto> Items, int TotalCount)> GetPagedNewsAsync(
             int pageNumber, int pageSize, int? siteId = null, string? searchTerm = null, string? sortBy = null, bool ascending = true)
         { 
