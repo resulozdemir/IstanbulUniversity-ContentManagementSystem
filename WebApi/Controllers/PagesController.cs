@@ -152,7 +152,7 @@ namespace new_cms.WebApi.Controllers
         [HttpPost] // POST /api/pages
         [ProducesResponseType(typeof(PageDto), 201)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(500)] //response model ıle dondur fılter mıddleware
         public async Task<ActionResult<PageDto>> CreatePage([FromBody] PageDto pageDto)
         {
             if (!ModelState.IsValid)

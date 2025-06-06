@@ -225,7 +225,7 @@ namespace new_cms.Application.Services
             }
              catch (Exception ex)
             {
-                 if (ex is KeyNotFoundException || ex is ArgumentException) throw;
+                if (ex is KeyNotFoundException || ex is ArgumentException) throw;
                 throw new InvalidOperationException($"Menü ve alt öğeleri silinirken bir hata oluştu (ID: {id}).", ex);
             }
         }
