@@ -82,4 +82,26 @@ bower_components/
 
 # Others
 *.DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Güvenlik - Sensitive data (Hassas veriler)
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Local.json
+secrets.json
+*.pfx
+*.p12
+*.key
+*.pem
+
+# User secrets
+UserSecrets/
+
+# Upload folders with sensitive content
+wwwroot/uploads/temp/
+wwwroot/uploads/documents/
+wwwroot/uploads/images/
+
+# Connection strings backup
+*connectionstrings*
+*connection-strings* 
