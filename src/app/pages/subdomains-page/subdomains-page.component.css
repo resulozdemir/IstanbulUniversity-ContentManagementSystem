@@ -1,0 +1,171 @@
+.container {
+  padding: 20px;
+}
+
+:root {
+  --primary-color: #00733e;
+  --secondary-color: #e0b203;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.mat-accordion {
+  margin-bottom: 20px;
+}
+
+.mat-expansion-panel {
+  margin-bottom: 10px;
+  border: 1px solid rgba(0, 115, 62, 0.2);
+}
+
+.mat-expansion-panel-header {
+  background-color: rgba(0, 115, 62, 0.05) !important;
+}
+
+.mat-expansion-panel-header.mat-expanded {
+  background-color: rgba(0, 115, 62, 0.1) !important;
+}
+
+mat-panel-title {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+mat-panel-description {
+  color: #666;
+  font-style: italic;
+}
+
+.mat-expansion-indicator::after {
+  color: var(--primary-color);
+}
+
+.mat-expansion-panel.mat-expanded {
+  border-left: 3px solid var(--secondary-color);
+}
+
+mat-panel-title span {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.mat-header-cell {
+  background-color: #f5f5f5;
+  color: #333;
+  font-weight: bold;
+}
+
+.mat-row:hover {
+  background-color: #f9f9f9;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.actions button {
+  margin-right: 5px;
+}
+
+.color-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-right: 5px;
+  border: 1px solid #ddd;
+}
+
+.site-edit-form {
+  padding: 10px 0;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col-md-6 {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.col-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.ms-2 {
+  margin-left: 0.5rem;
+}
+
+.badge.bg-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.badge.bg-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.badge.bg-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

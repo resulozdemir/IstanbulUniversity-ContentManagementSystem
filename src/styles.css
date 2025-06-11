@@ -1,0 +1,53 @@
+/* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+:root {
+  --primary-color: #00733e;
+  --secondary-color: #e0b203;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Angular Material tema renk geçersiz kılma */
+.mat-expansion-panel {
+  border-radius: 8px !important;
+}
+
+.mat-accordion .mat-expansion-panel {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mat-expansion-panel-header-title {
+  color: var(--primary-color) !important;
+}
+
+.mat-expansion-indicator::after {
+  color: var(--primary-color) !important;
+}
+
+button.mat-accent {
+  color: var(--secondary-color) !important;
+}
+
+.mat-table {
+  box-shadow: none !important;
+}
+
+/* Fix horizontal scrollbar issue */
+.container {
+  max-width: 100%;
+  overflow-x: hidden;
+}

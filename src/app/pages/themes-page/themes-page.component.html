@@ -1,0 +1,80 @@
+<div class="container">
+  <h1 style="font-size: 32px">Temalar</h1>
+
+  <!-- Create new theme section -->
+  <div class="create-theme-section">
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Yeni Tema Adı</mat-label>
+      <input
+        matInput
+        [(ngModel)]="newThemeName"
+        placeholder="Tema adını giriniz"
+      />
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="createTheme()"
+      [disabled]="loading || !newThemeName.trim()"
+    >
+      <mat-icon>add</mat-icon> Tema Oluştur
+    </button>
+  </div>
+
+  <!-- Loading indicator -->
+  @if (loading) {
+  <div class="loading-spinner">
+    <p>Yükleniyor...</p>
+  </div>
+  }
+
+  <!-- Themes list -->
+  <mat-accordion>
+    @for (theme of themes; track theme.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span style="color: #00733e; font-weight: bold">{{
+            theme.name
+          }}</span>
+        </mat-panel-title>
+        <mat-panel-description> ID: {{ theme.id }} </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="theme-content">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Tema Adı</mat-label>
+          <input
+            matInput
+            [(ngModel)]="theme.name"
+            placeholder="Tema adını giriniz"
+          />
+        </mat-form-field>
+
+        <div class="actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="updateTheme(theme)"
+            [disabled]="loading"
+          >
+            <mat-icon>save</mat-icon> Güncelle
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="deleteTheme(theme)"
+            [disabled]="loading"
+          >
+            <mat-icon>delete</mat-icon> Sil
+          </button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    } @empty {
+    <div class="no-themes">
+      <p>Henüz tema bulunmamaktadır.</p>
+    </div>
+    }
+  </mat-accordion>
+</div>

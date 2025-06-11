@@ -1,0 +1,178 @@
+<!-- Dashboard Sidebar Menu -->
+<div class="position-relative">
+  <div
+    class="d-flex flex-column flex-shrink-0 p-3 text-white transition-width"
+    [ngClass]="{ 'collapsed-sidebar': isCollapsed }"
+    style="min-height: 100vh; background-color: #00733e"
+  >
+    <!-- Dashboard başlığı (kapalıyken ikon açma butonu olarak kullanılır) -->
+    <div class="nav-item mb-2">
+      <div
+        class="nav-link text-white menu-item dashboard-heading"
+        [ngClass]="{ 'square-menu-item': isCollapsed }"
+        (click)="toggleSidebar()"
+      >
+        <div class="icon-container">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </div>
+        <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+          >IU Dashboard</span
+        >
+      </div>
+    </div>
+    <hr />
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <a
+          routerLink="/admin"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-link menu-item text-white"
+        >
+          <div class="icon-container">
+            <i class="bi bi-house-door-fill"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Ana Sayfa</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/pages"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Sayfalar</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/themes"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-palette"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Temalar</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/components"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-puzzle"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Bileşenler</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/subdomains"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-globe2"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Siteler</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/media"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-images"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Medya</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/users"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Kullanıcılar</span
+          >
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/admin/settings"
+          routerLinkActive="active-link"
+          class="nav-link text-white menu-item"
+        >
+          <div class="icon-container">
+            <i class="bi bi-gear-fill"></i>
+          </div>
+          <span class="menu-text" [ngClass]="{ 'd-none': isCollapsed }"
+            >Ayarlar</span
+          >
+        </a>
+      </li>
+    </ul>
+    <hr />
+    <div class="dropdown" *ngIf="!isCollapsed">
+      <a
+        href="#"
+        class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+        id="dropdownUser1"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <img
+          src="https://github.com/mdo.png"
+          alt=""
+          width="32"
+          height="32"
+          class="rounded-circle me-2"
+        />
+        <strong>Admin</strong>
+      </a>
+      <ul
+        class="dropdown-menu dropdown-menu-dark text-small shadow"
+        aria-labelledby="dropdownUser1"
+        style="background-color: #00733e; border-color: #e0b203"
+      >
+        <li><a class="dropdown-item" href="#">Profil</a></li>
+        <li><a class="dropdown-item" href="#">Ayarlar</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="#">Çıkış Yap</a></li>
+      </ul>
+    </div>
+    <div class="text-center" style="width: fit" *ngIf="isCollapsed">
+      <img
+        src="https://github.com/mdo.png"
+        alt=""
+        width="32"
+        height="32"
+        class="rounded-circle"
+      />
+    </div>
+  </div>
+</div>

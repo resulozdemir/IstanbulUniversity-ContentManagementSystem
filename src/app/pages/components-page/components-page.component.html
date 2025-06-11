@@ -1,0 +1,118 @@
+<div class="container">
+  <div class="header-container">
+    <h1 style="font-size: 32px">Bileşenler</h1>
+    <button
+      mat-raised-button
+      color="primary"
+      [routerLink]="['/admin/add-component']"
+    >
+      <mat-icon>add</mat-icon> Bileşen Ekle
+    </button>
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Bileşenler yükleniyor...</p>
+  </div>
+  } @else if (components.length === 0) {
+  <div class="no-components">
+    <p>Henüz bir bileşen bulunmamaktadır.</p>
+  </div>
+  } @else {
+  <mat-accordion>
+    @for (component of components; track component.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span style="color: #00733e; font-weight: bold">{{
+            component.name
+          }}</span>
+          <span class="id-badge">(ID: {{ component.id }})</span>
+        </mat-panel-title>
+        <mat-panel-description
+          >{{ getThemeName(component.themeId) }}
+          <span class="theme-id-badge"
+            >(Theme ID: {{ component.themeId }})</span
+          ></mat-panel-description
+        >
+      </mat-expansion-panel-header>
+
+      <div class="component-content">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="w-100 name-field">
+            <mat-label>Bileşen Adı</mat-label>
+            <input
+              matInput
+              [(ngModel)]="component.name"
+              placeholder="Bileşen adını giriniz"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Açıklama</mat-label>
+            <textarea
+              matInput
+              [(ngModel)]="component.description"
+              placeholder="Bileşen açıklaması giriniz"
+            ></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="code-editors">
+          <div class="code-group">
+            <label>HTML Kodu</label>
+            <textarea
+              matInput
+              [(ngModel)]="component.template"
+              class="code-textarea"
+              placeholder="HTML kodunu buraya yazın"
+            ></textarea>
+          </div>
+
+          <div class="code-group">
+            <label>CSS Kodu</label>
+            <textarea
+              matInput
+              [(ngModel)]="component.style"
+              class="code-textarea"
+              placeholder="CSS kodunu buraya yazın"
+            ></textarea>
+          </div>
+
+          <div class="code-group">
+            <label>JavaScript Kodu</label>
+            <textarea
+              matInput
+              [(ngModel)]="component.javascript"
+              class="code-textarea"
+              placeholder="JavaScript kodunu buraya yazın"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="deleteComponent(component.id)"
+            class="delete-btn"
+          >
+            <mat-icon>delete</mat-icon> Sil
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="saveComponent(component)"
+          >
+            <mat-icon>save</mat-icon> Kaydet
+          </button>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
+  }
+</div>

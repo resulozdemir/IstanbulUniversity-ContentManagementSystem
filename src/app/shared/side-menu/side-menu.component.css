@@ -1,0 +1,183 @@
+/* Sidebar stil ve geçiş efektleri */
+.transition-width {
+  width: 280px;
+  transition: width 0.2s ease-in-out;
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.collapsed-sidebar {
+  width: 80px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* Menü öğeleri hoverda renk değişimi */
+.nav-link:hover {
+  background-color: rgba(224, 178, 3, 0.3);
+}
+
+/* Aktif menü öğesi sarı renkte görünsün */
+.active-link {
+  background-color: #e0b203 !important;
+  color: black !important;
+}
+
+/* Toggle butonunun stillemesi */
+.btn {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #00733e;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}
+
+/* Kapatma butonu stillemesi */
+.close-btn {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+  transition: all 0.2s;
+}
+
+/* Dashboard başlık stillemesi (diğer menü öğeleriyle uyumlu) */
+.dashboard-heading {
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  margin: 8px 0 !important;
+}
+
+.dashboard-heading:hover {
+  background-color: rgba(224, 178, 3, 0.2) !important;
+}
+
+/* Menu açma butonu (icon) */
+.menu-opener {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.menu-opener:hover {
+  background-color: rgba(224, 178, 3, 0.3);
+  transform: scale(1.1);
+}
+
+/* Ikonlar için stil */
+.bi {
+  font-size: 1.2rem;
+}
+
+/* Menü öğeleri */
+.menu-item {
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  padding: 0.5rem;
+  height: 45px;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* İkon konteyneri - sabit pozisyon için */
+.icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Menü metni */
+.menu-text {
+  margin-left: 10px;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.d-none {
+  opacity: 0;
+  width: 0;
+  display: none;
+}
+
+/* Sidebar kapandığında da menü öğeleri aynı boyutta kalacak */
+.collapsed-sidebar .menu-item {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+/* Sidebar kapandığında kare menü öğeleri */
+.square-menu-item {
+  width: 45px;
+  height: 45px;
+  border-radius: 4px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.5rem;
+  margin: 8px auto;
+}
+
+/* Simgelerin konumlandırılması */
+.square-menu-item .bi {
+  margin: 0 !important;
+}
+
+/* Daha düzgün geçişler için */
+ul.nav {
+  position: relative;
+  width: 100%;
+}
+
+ul.nav li {
+  position: relative;
+  width: 100%;
+}
+
+.nav-item {
+  position: relative;
+}
+
+/* Menü öğelerinin sabit genişliğini sağlamak için */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}

@@ -1,0 +1,9 @@
+<div class="main-container">
+  <app-side-menu (sidebarToggled)="onSidebarToggled($event)"></app-side-menu>
+  <div
+    class="content-container pt-4 px-4"
+    [ngClass]="{ collapsed: sidebarCollapsed }"
+  >
+    <router-outlet></router-outlet>
+  </div>
+</div>

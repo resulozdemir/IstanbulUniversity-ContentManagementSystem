@@ -1,0 +1,148 @@
+<div class="container">
+  <h1 style="font-size: 32px">Sayfalar</h1>
+
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+    <p class="mt-2">Siteler ve sayfalar yükleniyor...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+    <button class="btn btn-sm btn-danger ms-2" (click)="loadSitesAndPages()">
+      Tekrar Dene
+    </button>
+  </div>
+
+  <mat-accordion *ngIf="!loading && !error">
+    <div *ngIf="sitesWithPages.length === 0" class="alert alert-info mt-3">
+      Henüz hiç site bulunmamaktadır.
+    </div>
+
+    @for (siteWithPages of sitesWithPages; track siteWithPages.site.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span style="color: #00733e; font-weight: bold">{{
+            siteWithPages.site.name
+          }}</span>
+        </mat-panel-title>
+        <mat-panel-description>
+          <span style="color: #666; font-style: italic">
+            {{ siteWithPages.site.domain || "Domain yok" }}
+            <span
+              *ngIf="siteWithPages.site.istemplate === 1"
+              class="badge bg-primary ms-2"
+              >Şablon</span
+            >
+          </span>
+          <button
+            mat-icon-button
+            color="primary"
+            class="ms-auto add-page-btn"
+            (click)="navigateToAddPage($event, siteWithPages.site)"
+            matTooltip="Yeni Sayfa Ekle"
+          >
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div
+        *ngIf="siteWithPages.pages.length === 0"
+        class="alert alert-warning text-center"
+        style="background-color: transparent; border: none"
+      >
+        <i class="bi bi-exclamation-triangle me-2"></i> Bu site için henüz hiç
+        sayfa bulunmamaktadır.
+      </div>
+
+      <table
+        mat-table
+        [dataSource]="siteWithPages.pages"
+        class="mat-elevation-z0 w-100"
+      >
+        <!-- ID Sütunu -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef><strong>ID</strong></th>
+          <td mat-cell *matCellDef="let page">{{ page.id }}</td>
+        </ng-container>
+
+        <!-- İsim Sütunu -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef><strong>Sayfa Adı</strong></th>
+          <td mat-cell *matCellDef="let page">{{ page.name }}</td>
+        </ng-container>
+
+        <!-- URL Sütunu -->
+        <ng-container matColumnDef="routing">
+          <th mat-header-cell *matHeaderCellDef><strong>URL</strong></th>
+          <td mat-cell *matCellDef="let page">{{ page.routing }}</td>
+        </ng-container>
+
+        <!-- Oluşturulma Tarihi Sütunu -->
+        <ng-container matColumnDef="createdDate">
+          <th mat-header-cell *matHeaderCellDef>
+            <strong>Oluşturulma Tarihi</strong>
+          </th>
+          <td mat-cell *matCellDef="let page">
+            <ng-container *ngIf="page.createdDate; else noDate">
+              {{ page.createdDate | date : "dd.MM.yyyy HH:mm" }}
+            </ng-container>
+            <ng-template #noDate>-</ng-template>
+          </td>
+        </ng-container>
+
+        <!-- Menüde Göster Sütunu -->
+        <ng-container matColumnDef="showInMenu">
+          <th mat-header-cell *matHeaderCellDef>
+            <strong>Menüde Göster</strong>
+          </th>
+          <td mat-cell *matCellDef="let page">
+            <span *ngIf="page.showInMenu" class="badge bg-success">Evet</span>
+            <span *ngIf="!page.showInMenu" class="badge bg-secondary"
+              >Hayır</span
+            >
+          </td>
+        </ng-container>
+
+        <!-- İşlemler Sütunu -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef><strong>İşlemler</strong></th>
+          <td mat-cell *matCellDef="let page">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="editPage(siteWithPages.site, page)"
+              matTooltip="Düzenle"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deletePage(siteWithPages.site, page)"
+              matTooltip="Sil"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button
+              *ngIf="siteWithPages.site.domain"
+              mat-icon-button
+              color="accent"
+              (click)="viewPage(siteWithPages.site, page)"
+              matTooltip="Görüntüle"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
+</div>

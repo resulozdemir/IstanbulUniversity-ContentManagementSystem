@@ -1,0 +1,190 @@
+<div class="container">
+  <h1 style="font-size: 32px">Siteler</h1>
+
+  <!-- Site creation form -->
+  <mat-card class="mb-4">
+    <mat-card-header>
+      <mat-card-title>Yeni Site Oluştur</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Site Adı</mat-label>
+            <input
+              matInput
+              [(ngModel)]="newSite.name"
+              placeholder="Site adını giriniz"
+            />
+          </mat-form-field>
+        </div>
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Domain</mat-label>
+            <input
+              matInput
+              [(ngModel)]="newSite.domain"
+              placeholder="Domain giriniz"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Tema Seçimi</mat-label>
+            <mat-select [(ngModel)]="newSite.themeId">
+              <mat-option [value]="0">Tema Seçiniz</mat-option>
+              <mat-option *ngFor="let theme of themes" [value]="theme.id">
+                {{ theme.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-6 mb-3 d-flex align-items-center">
+          <mat-checkbox
+            [(ngModel)]="newSite.isPublish"
+            [checked]="newSite.isPublish === 1"
+            (change)="newSite.isPublish = $event.checked ? 1 : 0"
+          >
+            Yayında olacak mı?
+          </mat-checkbox>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="!newSite.name || !newSite.domain"
+        (click)="createSite()"
+      >
+        <mat-icon>add</mat-icon> Oluştur
+      </button>
+      <button mat-button (click)="resetNewSiteForm()">İptal</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+    <p class="mt-2">Siteler yükleniyor...</p>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{ error }}
+    <button class="btn btn-sm btn-danger ms-2" (click)="loadSites()">
+      Tekrar Dene
+    </button>
+  </div>
+
+  <!-- Sites Accordion -->
+  <mat-accordion *ngIf="!loading && !error">
+    <div *ngIf="sites.length === 0" class="alert alert-info mt-3">
+      Henüz hiç site bulunmamaktadır.
+    </div>
+
+    @for (site of sites; track site.id) {
+    <mat-expansion-panel (opened)="onPanelOpened(site)">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span style="color: #00733e; font-weight: bold">{{ site.name }}</span>
+        </mat-panel-title>
+        <mat-panel-description>
+          <span style="color: #666; font-style: italic">
+            {{ site.domain || "Domain yok" }}
+            <span *ngIf="site.ispublish === 1" class="badge bg-success ms-2"
+              >Yayında</span
+            >
+            <span *ngIf="site.ispublish === 0" class="badge bg-danger ms-2"
+              >Yayında Değil</span
+            >
+          </span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <!-- Site edit form -->
+      <div class="site-edit-form">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Site Adı</mat-label>
+              <input
+                matInput
+                [ngModel]="editedSites[site.id]?.name"
+                (ngModelChange)="
+                  editedSites[site.id] && (editedSites[site.id].name = $event)
+                "
+                placeholder="Site adını giriniz"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-6 mb-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Domain</mat-label>
+              <input
+                matInput
+                [ngModel]="editedSites[site.id]?.domain"
+                (ngModelChange)="
+                  editedSites[site.id] && (editedSites[site.id].domain = $event)
+                "
+                placeholder="Domain giriniz"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Tema Seçimi</mat-label>
+              <mat-select
+                [ngModel]="editedSites[site.id]?.themeId"
+                (ngModelChange)="
+                  editedSites[site.id] &&
+                    (editedSites[site.id].themeId = $event)
+                "
+              >
+                <mat-option *ngFor="let theme of themes" [value]="theme.id">
+                  {{ theme.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6 mb-3 d-flex align-items-center">
+            <mat-checkbox
+              [ngModel]="editedSites[site.id]?.isPublish === 1"
+              (ngModelChange)="
+                editedSites[site.id] &&
+                  (editedSites[site.id].isPublish = $event ? 1 : 0)
+              "
+            >
+              Yayında olacak mı?
+            </mat-checkbox>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 d-flex justify-content-end">
+            <button
+              mat-raised-button
+              color="primary"
+              class="me-2"
+              (click)="updateSite(site)"
+            >
+              Kaydet
+            </button>
+            <button mat-button class="me-2" (click)="cancelEdit(site)">
+              İptal
+            </button>
+            <button mat-raised-button color="warn" (click)="deleteSite(site)">
+              Sil
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
+</div>

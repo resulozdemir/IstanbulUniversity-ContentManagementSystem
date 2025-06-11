@@ -1,0 +1,87 @@
+.container {
+  padding: 20px;
+}
+
+.page-card {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.mat-card-title {
+  color: #00733e;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.mat-card-subtitle {
+  color: #666;
+  font-size: 16px;
+  padding: 20px 0 !important;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+}
+
+.button-row button {
+  min-width: 120px;
+}
+
+/* Make textareas monospace for code editing */
+textarea {
+  font-family: "Consolas", "Monaco", "Courier New", monospace;
+  line-height: 1.5;
+}
+
+/* Style for tabs */
+::ng-deep .mat-tab-label {
+  color: #00733e;
+  opacity: 0.7;
+}
+
+::ng-deep .mat-tab-label.mat-tab-label-active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar {
+  background-color: #00733e;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .row > div {
+    margin-bottom: 15px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 30px;
+}
+
+.menu-checkbox {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.menu-checkbox ::ng-deep .mat-checkbox-inner-container {
+  width: 20px;
+  height: 20px;
+}
+
+.checkbox-helper {
+  color: #666;
+  font-size: 14px;
+  margin-left: 32px;
+  margin-top: 4px;
+}

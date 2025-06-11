@@ -1,0 +1,185 @@
+<div class="container">
+  <mat-card class="page-card">
+    <mat-card-header>
+      <mat-card-title>{{
+        isEditMode ? "Sayfa Düzenle" : "Yeni Sayfa Ekle"
+      }}</mat-card-title>
+      <mat-card-subtitle style="padding: 20px 0 !important" *ngIf="siteName"
+        >{{ siteName }} sitesi için
+        {{
+          isEditMode ? "sayfa düzenleniyor" : "sayfa oluşturuluyor"
+        }}</mat-card-subtitle
+      >
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p class="mt-3">Sayfa bilgileri yükleniyor...</p>
+      </div>
+
+      <form [formGroup]="pageForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Sayfa Adı</mat-label>
+              <input
+                matInput
+                formControlName="name"
+                placeholder="Sayfa adını giriniz"
+              />
+              <mat-error *ngIf="pageForm.get('name')?.hasError('required')">
+                Sayfa adı zorunludur
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Rota (URL)</mat-label>
+              <input
+                matInput
+                formControlName="routing"
+                placeholder="Sayfa rotasını giriniz"
+              />
+              <mat-hint>Örn: / (ana sayfa) veya /hakkimizda</mat-hint>
+              <mat-error *ngIf="pageForm.get('routing')?.hasError('required')">
+                Rota zorunludur
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <mat-tab-group dynamicHeight>
+          <!-- İçerik Sekmesi -->
+          <mat-tab label="İçerik">
+            <div class="mt-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>HTML İçerik</mat-label>
+                <textarea
+                  matInput
+                  formControlName="html"
+                  rows="15"
+                  placeholder="Sayfanın HTML içeriğini giriniz"
+                ></textarea>
+                <mat-error *ngIf="pageForm.get('html')?.hasError('required')">
+                  HTML içerik zorunludur
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+
+          <!-- Stil Sekmesi -->
+          <mat-tab label="CSS Stil">
+            <div class="mt-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CSS Stil</mat-label>
+                <textarea
+                  matInput
+                  formControlName="style"
+                  rows="15"
+                  placeholder="Sayfanın CSS stilini giriniz"
+                ></textarea>
+                <mat-error *ngIf="pageForm.get('style')?.hasError('required')">
+                  CSS stil zorunludur
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+
+          <!-- JavaScript Sekmesi -->
+          <mat-tab label="JavaScript">
+            <div class="mt-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>JavaScript</mat-label>
+                <textarea
+                  matInput
+                  formControlName="javascript"
+                  rows="15"
+                  placeholder="Sayfanın JavaScript kodunu giriniz"
+                ></textarea>
+                <mat-error
+                  *ngIf="pageForm.get('javascript')?.hasError('required')"
+                >
+                  JavaScript kodu zorunludur
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+
+          <!-- Meta Sekmesi -->
+          <mat-tab label="Meta Bilgileri">
+            <div class="mt-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Meta Başlık</mat-label>
+                <input
+                  matInput
+                  formControlName="metaTitle"
+                  placeholder="Meta başlık giriniz"
+                />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100 mt-3">
+                <mat-label>Meta Açıklama</mat-label>
+                <textarea
+                  matInput
+                  formControlName="metaDescription"
+                  rows="4"
+                  placeholder="Meta açıklama giriniz"
+                ></textarea>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100 mt-3">
+                <mat-label>Meta Anahtar Kelimeler</mat-label>
+                <input
+                  matInput
+                  formControlName="metaKeywords"
+                  placeholder="Meta anahtar kelimeleri giriniz"
+                />
+                <mat-hint>Anahtar kelimeleri virgülle ayırınız</mat-hint>
+              </mat-form-field>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+
+        <div class="mt-3">
+          <mat-checkbox
+            formControlName="showInMenu"
+            color="primary"
+            class="menu-checkbox"
+            [checked]="pageForm.get('showInMenu')?.value"
+            (change)="pageForm.get('showInMenu')?.setValue($event.checked)"
+          >
+            Menüde Göster
+          </mat-checkbox>
+          <p class="checkbox-helper">
+            Sayfanın site menüsünde görünmesini istiyorsanız işaretleyin. Mevcut
+            değer:
+            <strong>{{
+              pageForm.get("showInMenu")?.value === true ? "Evet" : "Hayır"
+            }}</strong>
+          </p>
+        </div>
+
+        <div class="button-row mt-4">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="isSubmitting"
+          >
+            <mat-icon>save</mat-icon> {{ isEditMode ? "Güncelle" : "Kaydet" }}
+          </button>
+          <button
+            mat-button
+            type="button"
+            (click)="cancel()"
+            [disabled]="isSubmitting"
+          >
+            İptal
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

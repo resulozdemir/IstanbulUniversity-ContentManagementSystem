@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="header-container">
+    <h1>Bileşen Ekle</h1>
+    <button mat-raised-button color="primary" routerLink="/admin/components">
+      <mat-icon>arrow_back</mat-icon> Geri
+    </button>
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Temalar yükleniyor...</p>
+  </div>
+  } @else {
+  <form [formGroup]="componentForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Tema Seçimi</mat-label>
+        <mat-select formControlName="themeId" required>
+          @for (theme of themes; track theme.id) {
+          <mat-option [value]="theme.id"
+            >{{ theme.name }} (ID: {{ theme.id }})</mat-option
+          >
+          }
+        </mat-select>
+        <mat-error *ngIf="componentForm.get('themeId')?.hasError('required')">
+          Tema seçimi zorunludur
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Bileşen Adı</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Bileşen adını giriniz"
+          required
+        />
+        <mat-error *ngIf="componentForm.get('name')?.hasError('required')">
+          Bileşen adı zorunludur
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Açıklama</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          placeholder="Bileşen açıklaması giriniz"
+          required
+        ></textarea>
+        <mat-error
+          *ngIf="componentForm.get('description')?.hasError('required')"
+        >
+          Açıklama zorunludur
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="code-editors">
+      <div class="code-group">
+        <label>HTML Kodu <span class="required-label">*</span></label>
+        <textarea
+          matInput
+          formControlName="template"
+          class="code-textarea"
+          placeholder="HTML kodunu buraya yazın"
+          required
+        ></textarea>
+        <mat-error *ngIf="componentForm.get('template')?.hasError('required')">
+          HTML kodu zorunludur
+        </mat-error>
+      </div>
+
+      <div class="code-group">
+        <label
+          >CSS Kodu <span class="optional-label">(İsteğe bağlı)</span></label
+        >
+        <textarea
+          matInput
+          formControlName="style"
+          class="code-textarea"
+          placeholder="CSS kodunu buraya yazın (boş bırakılabilir)"
+        ></textarea>
+      </div>
+
+      <div class="code-group">
+        <label
+          >JavaScript Kodu
+          <span class="optional-label">(İsteğe bağlı)</span></label
+        >
+        <textarea
+          matInput
+          formControlName="javascript"
+          class="code-textarea"
+          placeholder="JavaScript kodunu buraya yazın (boş bırakılabilir)"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="componentForm.invalid || isSubmitting"
+      >
+        <mat-icon>save</mat-icon> Kaydet
+      </button>
+      <button
+        mat-button
+        type="button"
+        routerLink="/admin/components"
+        [disabled]="isSubmitting"
+      >
+        İptal
+      </button>
+    </div>
+  </form>
+  }
+</div>
