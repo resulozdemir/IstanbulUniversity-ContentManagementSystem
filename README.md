@@ -1,59 +1,88 @@
-# IuBackendDashboard
+# IU Backend Dashboard
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
+A modern, modular admin dashboard for content management, built with Angular 19 and Material Design. This project is designed for managing sites, pages, components, themes, users, and media in a scalable, maintainable way.
 
-## Development server
+## 🚀 Features
 
-To start a local development server, run:
+- **Site Management**: Create and manage multiple sites and subdomains
+- **Page Management**: Add, edit, and organize content pages
+- **Component System**: Reusable UI components for rapid development
+- **Theme Management**: Switch and customize themes
+- **User Management**: Register, login, and manage users
+- **Media Library**: Upload and manage images and documents
+- **Settings**: Configure application and site settings
+- **Responsive Design**: Works on desktop and mobile
 
-```bash
-ng serve
+## 🛠️ Technology Stack
+
+- **Angular 19**
+- **Angular Material**
+- **Bootstrap 5**
+- **RxJS**
+- **TypeScript**
+- **Tailwind CSS (via PostCSS)**
+
+## 📁 Project Structure
+
+```
+src/
+  app/
+    admin/           # Admin dashboard modules
+    layouts/         # Layout components
+    models/          # TypeScript models
+    pages/           # Feature pages (dashboard, media, users, etc.)
+    services/        # API and business logic services
+    shared/          # Shared components and utilities
+  environments/      # Environment configs
+public/              # Static assets
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🚦 Getting Started
 
-## Code scaffolding
+### Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js 18+
+- npm 9+
+- Angular CLI 19+
 
-```bash
-ng generate component component-name
-```
+### Installation
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+1. **Clone the repository**
+   ```powershell
+   git clone https://github.com/your-org/iu-backend-dashboard.git
+   cd iu-backend-dashboard
+   ```
+2. **Install dependencies**
+   ```powershell
+   npm install
+   ```
+3. **Configure API URL**
 
-```bash
-ng generate --help
-```
+   - Edit `src/environments/environment.ts` and set `apiUrl` to your backend endpoint.
 
-## Building
+4. **Run the development server**
+   ```powershell
+   ng serve
+   ```
+   Open [http://localhost:4200](http://localhost:4200) in your browser.
 
-To build the project run:
+## 🧪 Testing
 
-```bash
-ng build
-```
+- **Unit tests**: `ng test`
+- **E2E tests**: `ng e2e` (configure your preferred e2e framework)
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🤝 Contributing
 
-## Running unit tests
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to your branch (`git push origin feature/your-feature`)
+5. Open a Pull Request
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 📄 License
 
-```bash
-ng test
-```
+This project is developed for Istanbul University. All rights reserved.
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**IU Backend Dashboard** – Modern content management for academic and enterprise needs.
